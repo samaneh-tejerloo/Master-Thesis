@@ -1,0 +1,735 @@
+Gene > Primary DBID,Gene > Systematic Name,Gene > Organism . Short Name,Gene > Standard Name,Gene > Name
+SGD:S000000002,YAL002W,S. cerevisiae,VPS8,Vacuolar Protein Sorting
+SGD:S000000009,YAL011W,S. cerevisiae,SWC3,SWr Complex
+SGD:S000000011,YAL013W,S. cerevisiae,DEP1,Disability in regulation of Expression of genes involved in Phospholipid biosynthesis
+SGD:S000000013,YAL015C,S. cerevisiae,NTG1,eNdonuclease Three-like Glycosylase
+SGD:S000000017,YAL019W,S. cerevisiae,FUN30,Function Unknown Now
+SGD:S000000022,YAL024C,S. cerevisiae,LTE1,Low Temperature Essential
+SGD:S000000025,YAL027W,S. cerevisiae,SAW1,Single-strand Annealing Weakened
+SGD:S000000038,YAL040C,S. cerevisiae,CLN3,CycLiN
+SGD:S000000040,YAL042W,S. cerevisiae,ERV46,ER Vesicle
+SGD:S000000041,YAL043C,S. cerevisiae,PTA1,Pre-Trna Accumulation
+SGD:S000000048,YAL051W,S. cerevisiae,OAF1,Oleate-Activated transcription Factor
+SGD:S000000051,YAL055W,S. cerevisiae,PEX22,PEroXisome related
+SGD:S000000063,YAR002W,S. cerevisiae,NUP60,NUclear Pore
+SGD:S000000064,YAR003W,S. cerevisiae,SWD1,"Set1c, WD40 repeat protein"
+SGD:S000000065,YAR007C,S. cerevisiae,RFA1,Replication Factor A
+SGD:S000000098,YBL002W,S. cerevisiae,HTB2,Histone h Two B
+SGD:S000000099,YBL003C,S. cerevisiae,HTA2,Histone h Two A
+SGD:S000000103,YBL007C,S. cerevisiae,SLA1,Synthetic Lethal with ABP1
+SGD:S000000104,YBL008W,S. cerevisiae,HIR1,HIstone Regulation
+SGD:S000000112,YBL016W,S. cerevisiae,FUS3,cell FUSion
+SGD:S000000115,YBL019W,S. cerevisiae,APN2,APurinic/apyrimidinic eNdonuclease
+SGD:S000000132,YBL036C,S. cerevisiae,,
+SGD:S000000142,YBL046W,S. cerevisiae,PSY4,Platinum SensitivitY
+SGD:S000000148,YBL052C,S. cerevisiae,SAS3,Something About Silencing
+SGD:S000000154,YBL058W,S. cerevisiae,SHP1,Suppressor of High-copy PP1
+SGD:S000000163,YBL067C,S. cerevisiae,UBP13,UBiquitin-specific Protease
+SGD:S000000182,YBL086C,S. cerevisiae,,
+SGD:S000000184,YBL088C,S. cerevisiae,TEL1,TELomere maintenance
+SGD:S000000199,YBL103C,S. cerevisiae,RTG3,ReTroGrade regulation
+SGD:S000000213,YBR009C,S. cerevisiae,HHF1,Histone H Four
+SGD:S000000214,YBR010W,S. cerevisiae,HHT1,Histone H Three
+SGD:S000000234,YBR030W,S. cerevisiae,RKM3,Ribosomal lysine (K) Methyltransferase
+SGD:S000000238,YBR034C,S. cerevisiae,HMT1,HnRNP MethylTransferase
+SGD:S000000252,YBR048W,S. cerevisiae,RPS11B,Ribosomal Protein of the Small subunit
+SGD:S000000253,YBR049C,S. cerevisiae,REB1,RNA polymerase I Enhancer Binding protein
+SGD:S000000261,YBR057C,S. cerevisiae,MUM2,MUddled Meiosis
+SGD:S000000277,YBR073W,S. cerevisiae,RDH54,RaD54 Homolog
+SGD:S000000286,YBR082C,S. cerevisiae,UBC4,UBiquitin-Conjugating
+SGD:S000000287,YBR083W,S. cerevisiae,TEC1,Transposon Enhancement Control
+SGD:S000000291,YBR087W,S. cerevisiae,RFC5,Replication Factor C
+SGD:S000000292,YBR088C,S. cerevisiae,POL30,POLymerase
+SGD:S000000298,YBR094W,S. cerevisiae,PBY1,P-BodY associated protein
+SGD:S000000299,YBR095C,S. cerevisiae,RXT2,
+SGD:S000000302,YBR098W,S. cerevisiae,MMS4,Methyl MethaneSulfonate sensitivity
+SGD:S000000307,YBR103W,S. cerevisiae,SIF2,Sir4p-Interacting Factor
+SGD:S000000311,YBR107C,S. cerevisiae,IML3,Increased Minichromosome Loss
+SGD:S000000318,YBR114W,S. cerevisiae,RAD16,RADiation sensitive
+SGD:S000000323,YBR119W,S. cerevisiae,MUD1,Mutant U1 Die
+SGD:S000000339,YBR135W,S. cerevisiae,CKS1,Cdc28 Kinase Subunit
+SGD:S000000375,YBR171W,S. cerevisiae,SEC66,SECretory
+SGD:S000000377,YBR173C,S. cerevisiae,UMP1,Ubiquitin-Mediated Proteolysis
+SGD:S000000379,YBR175W,S. cerevisiae,SWD3,"Set1c, WD40 repeat protein"
+SGD:S000000397,YBR193C,S. cerevisiae,MED8,MEDiator complex
+SGD:S000000398,YBR194W,S. cerevisiae,AIM4,Altered Inheritance rate of Mitochondria
+SGD:S000000399,YBR195C,S. cerevisiae,MSI1,Multicopy Suppressor of IRA1
+SGD:S000000402,YBR198C,S. cerevisiae,TAF5,TATA binding protein-Associated Factor
+SGD:S000000419,YBR215W,S. cerevisiae,HPC2,Histone Periodic Control
+SGD:S000000427,YBR223C,S. cerevisiae,TDP1,Tyrosyl-DNA Phosphodiesterase
+SGD:S000000432,YBR228W,S. cerevisiae,SLX1,Synthetic Lethal of unknown (X) function
+SGD:S000000435,YBR231C,S. cerevisiae,SWC5,SWr Complex
+SGD:S000000449,YBR245C,S. cerevisiae,ISW1,Imitation SWitch subfamily
+SGD:S000000459,YBR255W,S. cerevisiae,MTC4,Maintenance of Telomere Capping
+SGD:S000000462,YBR258C,S. cerevisiae,SHG1,"Set1c, Hypothetical G"
+SGD:S000000471,YBR267W,S. cerevisiae,REI1,REquired for Isotropic bud growth
+SGD:S000000476,YBR272C,S. cerevisiae,HSM3,enHanced Spontaneous Mutability
+SGD:S000000478,YBR274W,S. cerevisiae,CHK1,CHeckpoint Kinase
+SGD:S000000479,YBR275C,S. cerevisiae,RIF1,RAP1-Interacting Factor
+SGD:S000000482,YBR278W,S. cerevisiae,DPB3,DNA Polymerase B (II) subunit
+SGD:S000000483,YBR279W,S. cerevisiae,PAF1,RNA Polymerase II Associated Factor
+SGD:S000000493,YBR289W,S. cerevisiae,SNF5,Sucrose NonFermenting
+SGD:S000000516,YCL010C,S. cerevisiae,SGF29,SaGa associated Factor
+SGD:S000000517,YCL011C,S. cerevisiae,GBP2,G-strand Binding Protein
+SGD:S000000521,YCL016C,S. cerevisiae,DCC1,Defective in sister Chromatid Cohesion
+SGD:S000000534,YCL029C,S. cerevisiae,BIK1,BIlateral Karyogamy defect
+SGD:S000000542,YCL037C,S. cerevisiae,SRO9,Suppressor of rho3
+SGD:S000000566,YCL061C,S. cerevisiae,MRC1,Mediator of the Replication Checkpoint
+SGD:S000000595,YCR002C,S. cerevisiae,CDC10,Cell Division Cycle
+SGD:S000000602,YCR009C,S. cerevisiae,RVS161,Reduced Viability on Starvation
+SGD:S000000607,YCR014C,S. cerevisiae,POL4,POLymerase
+SGD:S000000629,YCR033W,S. cerevisiae,SNT1,SaNT domains
+SGD:S000000648,YCR052W,S. cerevisiae,RSC6,Remodel the Structure of Chromatin
+SGD:S000000656,YCR060W,S. cerevisiae,TAH1,Tpr-containing protein Associated with Hsp90
+SGD:S000000661,YCR065W,S. cerevisiae,HCM1,High-Copy suppressor of Calmodulin
+SGD:S000000662,YCR066W,S. cerevisiae,RAD18,RADiation sensitive
+SGD:S000000672,YCR076C,S. cerevisiae,FUB1,FUnction of Boundary
+SGD:S000000673,YCR077C,S. cerevisiae,PAT1,Protein Associated with Topoisomerase II
+SGD:S000000677,YCR081W,S. cerevisiae,SRB8,Suppressor of RNA polymerase B
+SGD:S000000682,YCR086W,S. cerevisiae,CSM1,Chromosome Segregation in Meiosis
+SGD:S000000688,YCR092C,S. cerevisiae,MSH3,MutS Homolog
+SGD:S000000729,YEL003W,S. cerevisiae,GIM4,Gene Involved in Microtubule biogenesis
+SGD:S000000738,YEL012W,S. cerevisiae,UBC8,UBiquitin-Conjugating
+SGD:S000000744,YEL018W,S. cerevisiae,EAF5,Esa1p-Associated Factor
+SGD:S000000757,YEL031W,S. cerevisiae,SPF1,Sensitivity to Pichia Farinosa killer toxin
+SGD:S000000763,YEL037C,S. cerevisiae,RAD23,RADiation sensitive
+SGD:S000000782,YEL056W,S. cerevisiae,HAT2,Histone AcetylTransferase
+SGD:S000000787,YEL061C,S. cerevisiae,CIN8,Chromosome INstability
+SGD:S000000809,YER007W,S. cerevisiae,PAC2,Perish in the Absence of Cin8p
+SGD:S000000818,YER016W,S. cerevisiae,BIM1,BInding to Microtubules
+SGD:S000000821,YER019W,S. cerevisiae,ISC1,Inositol phosphoSphingolipid phospholipase C
+SGD:S000000829,YER027C,S. cerevisiae,GAL83,GALactose metabolism
+SGD:S000000832,YER030W,S. cerevisiae,CHZ1,Chaperone for Htz1/H2A-H2B dimer
+SGD:S000000837,YER035W,S. cerevisiae,EDC2,Enhancer of mRNA DeCapping
+SGD:S000000851,YER049W,S. cerevisiae,TPA1,Termination and PolyAdenylation
+SGD:S000000870,YER068W,S. cerevisiae,MOT2,Modulator Of Transcription
+SGD:S000000885,YER083C,S. cerevisiae,GET2,Guided Entry of Tail-anchored proteins
+SGD:S000000888,YER086W,S. cerevisiae,ILV1,IsoLeucine-plus-Valine requiring
+SGD:S000000890,YER088C,S. cerevisiae,DOT6,Disruptor Of Telomeric silencing
+SGD:S000000894,YER092W,S. cerevisiae,IES5,Ino Eighty Subunit
+SGD:S000000897,YER095W,S. cerevisiae,RAD51,RADiation sensitive
+SGD:S000000900,YER098W,S. cerevisiae,UBP9,UBiquitin-specific Protease
+SGD:S000000902,YER100W,S. cerevisiae,UBC6,UBiquitin-Conjugating
+SGD:S000000906,YER104W,S. cerevisiae,RTT105,Regulator of Ty1 Transposition
+SGD:S000000913,YER111C,S. cerevisiae,SWI4,SWItching deficient
+SGD:S000000918,YER116C,S. cerevisiae,SLX8,Synthetic Lethal of unknown (X) function
+SGD:S000000925,YER123W,S. cerevisiae,YCK3,Yeast Casein Kinase
+SGD:S000000927,YER125W,S. cerevisiae,RSP5,Reverses Spt- Phenotype
+SGD:S000000944,YER142C,S. cerevisiae,MAG1,3-MethylAdenine DNA Glycosylase
+SGD:S000000946,YER144C,S. cerevisiae,UBP5,UBiquitin-specific Protease
+SGD:S000000953,YER151C,S. cerevisiae,UBP3,UBiquitin-specific Protease
+SGD:S000000957,YER155C,S. cerevisiae,BEM2,Bud EMergence
+SGD:S000000963,YER161C,S. cerevisiae,SPT2,SuPpressor of Ty's
+SGD:S000000964,YER162C,S. cerevisiae,RAD4,RADiation sensitive
+SGD:S000000966,YER164W,S. cerevisiae,CHD1,"Chromatin organization modifier, Helicase, and DNA-binding domains"
+SGD:S000000969,YER167W,S. cerevisiae,BCK2,Bypass of C Kinase
+SGD:S000000971,YER169W,S. cerevisiae,RPH1,Regulator of PHR1
+SGD:S000000973,YER171W,S. cerevisiae,RAD3,RADiation sensitive
+SGD:S000000975,YER173W,S. cerevisiae,RAD24,RADiation sensitive
+SGD:S000000979,YER177W,S. cerevisiae,BMH1,Brain Modulosignalin Homolog
+SGD:S000000980,YER178W,S. cerevisiae,PDA1,Pyruvate Dehydrogenase Alpha
+SGD:S000000981,YER179W,S. cerevisiae,DMC1,Disrupted Meiotic cDNA
+SGD:S000001014,YHL022C,S. cerevisiae,SPO11,SPOrulation
+SGD:S000001016,YHL024W,S. cerevisiae,RIM4,Regulator of IME2
+SGD:S000001022,YHL030W,S. cerevisiae,ECM29,ExtraCellular Mutant
+SGD:S000001031,YHL039W,S. cerevisiae,EFM1,Elongation Factor Methyltransferase
+SGD:S000001055,YHR013C,S. cerevisiae,ARD1,ARrest Defective
+SGD:S000001067,YHR025W,S. cerevisiae,THR1,THReonine requiring
+SGD:S000001073,YHR031C,S. cerevisiae,RRM3,rDNA Recombination Mutation
+SGD:S000001076,YHR034C,S. cerevisiae,PIH1,Protein Interacting with Hsp90
+SGD:S000001083,YHR041C,S. cerevisiae,SRB2,Suppressor of RNA polymerase B
+SGD:S000001108,YHR066W,S. cerevisiae,SSF1,Suppressor of ste4 (Four)
+SGD:S000001113,YHR071W,S. cerevisiae,PCL5,Pho85 CycLin
+SGD:S000001123,YHR081W,S. cerevisiae,LRP1,Like RrP6
+SGD:S000001132,YHR090C,S. cerevisiae,YNG2,Yeast iNG1 homolog
+SGD:S000001157,YHR115C,S. cerevisiae,DMA1,Defective in Mitotic Arrest
+SGD:S000001162,YHR120W,S. cerevisiae,MSH1,MutS Homolog
+SGD:S000001194,YHR151C,S. cerevisiae,MTC6,Maintenance of Telomere Capping
+SGD:S000001197,YHR154W,S. cerevisiae,RTT107,Regulator of Ty1 Transposition
+SGD:S000001200,YHR157W,S. cerevisiae,REC104,RECombination
+SGD:S000001210,YHR167W,S. cerevisiae,THP2,THO2 - HPR1 Phenotype
+SGD:S000001221,YHR178W,S. cerevisiae,STB5,Sin Three Binding protein
+SGD:S000001230,YHR187W,S. cerevisiae,IKI1,Insensitive to KIller toxin
+SGD:S000001234,YHR191C,S. cerevisiae,CTF8,Chromosome Transmission Fidelity
+SGD:S000001243,YHR200W,S. cerevisiae,RPN10,Regulatory Particle Non-ATPase
+SGD:S000001250,YHR207C,S. cerevisiae,SET5,SET domain-containing
+SGD:S000001272,YIL010W,S. cerevisiae,DOT5,Disruptor Of Telomeric silencing
+SGD:S000001279,YIL017C,S. cerevisiae,VID28,Vacuolar Import and Degradation
+SGD:S000001283,YIL021W,S. cerevisiae,RPB3,RNA Polymerase B
+SGD:S000001297,YIL035C,S. cerevisiae,CKA1,Casein Kinase Alpha subunit
+SGD:S000001298,YIL036W,S. cerevisiae,CST6,Chromosome STability
+SGD:S000001302,YIL040W,S. cerevisiae,APQ12,APical growth revealed by Quantitative morphological analysis
+SGD:S000001328,YIL066C,S. cerevisiae,RNR3,RiboNucleotide Reductase
+SGD:S000001334,YIL072W,S. cerevisiae,HOP1,HOmolog Pairing
+SGD:S000001337,YIL075C,S. cerevisiae,RPN2,Regulatory Particle Non-ATPase
+SGD:S000001338,YIL076W,S. cerevisiae,SEC28,SECretory
+SGD:S000001346,YIL084C,S. cerevisiae,SDS3,Suppressor of Defective Silencing
+SGD:S000001359,YIL097W,S. cerevisiae,FYV10,Function required for Yeast Viability
+SGD:S000001374,YIL112W,S. cerevisiae,HOS4,Hda One Similar
+SGD:S000001390,YIL128W,S. cerevisiae,MET18,METhionine requiring
+SGD:S000001393,YIL131C,S. cerevisiae,FKH1,ForK head Homolog
+SGD:S000001395,YIL133C,S. cerevisiae,RPL16A,Ribosomal Protein of the Large subunit
+SGD:S000001401,YIL139C,S. cerevisiae,REV7,REVersionless
+SGD:S000001415,YIL153W,S. cerevisiae,RRD1,Resistant to Rapamycin Deletion
+SGD:S000001418,YIL156W,S. cerevisiae,UBP7,UBiquitin-specific Protease
+SGD:S000001441,YIR002C,S. cerevisiae,MPH1,Mutator PHenotype
+SGD:S000001444,YIR005W,S. cerevisiae,IST3,Increased Sodium Tolerance
+SGD:S000001447,YIR008C,S. cerevisiae,PRI1,DNA PRImase
+SGD:S000001448,YIR009W,S. cerevisiae,MSL1,MUD Synthetic Lethal
+SGD:S000001462,YIR023W,S. cerevisiae,DAL81,Degradation of Allantoin
+SGD:S000001464,YIR025W,S. cerevisiae,MND2,Meiotic Nuclear Divisions
+SGD:S000001493,YKL010C,S. cerevisiae,UFD4,Ubiquitin Fusion Degradation protein
+SGD:S000001500,YKL017C,S. cerevisiae,HCS1,dna HeliCaSe
+SGD:S000001501,YKL018W,S. cerevisiae,SWD2,"Set1c, WD40 repeat protein"
+SGD:S000001503,YKL020C,S. cerevisiae,SPT23,SuPpressor of Ty
+SGD:S000001506,YKL023W,S. cerevisiae,SKA1,SKi Associated factor
+SGD:S000001552,YKL069W,S. cerevisiae,,
+SGD:S000001584,YKL101W,S. cerevisiae,HSL1,Histone Synthetic Lethal
+SGD:S000001595,YKL112W,S. cerevisiae,ABF1,ARS-Binding Factor
+SGD:S000001596,YKL113C,S. cerevisiae,RAD27,RADiation sensitive
+SGD:S000001597,YKL114C,S. cerevisiae,APN1,APurinic/apyrimidinic eNdonuclease
+SGD:S000001600,YKL117W,S. cerevisiae,SBA1,increased Sensitivity to Benzoquinone Ansamycins
+SGD:S000001602,YKL119C,S. cerevisiae,VPH2,Vacuolar pH
+SGD:S000001627,YKL144C,S. cerevisiae,RPC25,RNA Polymerase C
+SGD:S000001632,YKL149C,S. cerevisiae,DBR1,DeBRanching
+SGD:S000001643,YKL160W,S. cerevisiae,ELF1,ELongation Factor
+SGD:S000001695,YKL212W,S. cerevisiae,SAC1,Suppressor of ACtin
+SGD:S000001696,YKL213C,S. cerevisiae,DOA1,Degradation Of Alpha
+SGD:S000001718,YKR010C,S. cerevisiae,TOF2,TOpoisomerase I-interacting Factor
+SGD:S000001736,YKR028W,S. cerevisiae,SAP190,Sit4 Associated Protein
+SGD:S000001737,YKR029C,S. cerevisiae,SET3,SET domain-containing
+SGD:S000001756,YKR048C,S. cerevisiae,NAP1,Nucleosome Assembly Protein
+SGD:S000001762,YKR054C,S. cerevisiae,DYN1,DYNein
+SGD:S000001770,YKR062W,S. cerevisiae,TFA2,Transcription Factor A
+SGD:S000001780,YKR072C,S. cerevisiae,SIS2,SIt4 Suppressor
+SGD:S000001785,YKR077W,S. cerevisiae,MSA2,Mbf and Sbf Associated
+SGD:S000001790,YKR082W,S. cerevisiae,NUP133,NUclear Pore
+SGD:S000001800,YKR092C,S. cerevisiae,SRP40,Serine Rich Protein
+SGD:S000001806,YKR098C,S. cerevisiae,UBP11,UBiquitin-specific Protease
+SGD:S000001809,YKR101W,S. cerevisiae,SIR1,Silent Information Regulator
+SGD:S000001855,YFL039C,S. cerevisiae,ACT1,ACTin
+SGD:S000001871,YFL023W,S. cerevisiae,BUD27,BUD site selection
+SGD:S000001881,YFL013C,S. cerevisiae,IES1,Ino Eighty Subunit
+SGD:S000001887,YFL007W,S. cerevisiae,BLM10,BLeoMycin resistance
+SGD:S000001891,YFL003C,S. cerevisiae,MSH4,MutS Homolog
+SGD:S000001895,YFL001W,S. cerevisiae,DEG1,DEpressed Growth rate
+SGD:S000001905,YFR009W,S. cerevisiae,GCN20,General Control Nonderepressible
+SGD:S000001906,YFR010W,S. cerevisiae,UBP6,UBiquitin-specific Protease
+SGD:S000001909,YFR013W,S. cerevisiae,IOC3,Iswi One Complex
+SGD:S000001915,YFR019W,S. cerevisiae,FAB1,Forms Aploid and Binucleate cells
+SGD:S000001932,YFR036W,S. cerevisiae,CDC26,Cell Division Cycle
+SGD:S000001933,YFR037C,S. cerevisiae,RSC8,Remodel the Structure of Chromatin
+SGD:S000001934,YFR038W,S. cerevisiae,IRC5,Increased Recombination Centers
+SGD:S000001936,YFR040W,S. cerevisiae,SAP155,Sit4 Associated Protein
+SGD:S000001957,YHR079C-A,S. cerevisiae,SAE3,Sporulation in the Absence of spo Eleven
+SGD:S000002157,YBR089C-A,S. cerevisiae,NHP6B,Non-Histone Protein
+SGD:S000002160,YDL002C,S. cerevisiae,NHP10,Non-Histone Protein
+SGD:S000002163,YDL005C,S. cerevisiae,MED2,MEDiator complex
+SGD:S000002171,YDL013W,S. cerevisiae,SLX5,Synthetic Lethal of unknown [X] function
+SGD:S000002178,YDL020C,S. cerevisiae,RPN4,Regulatory Particle Non-ATPase
+SGD:S000002191,YDL033C,S. cerevisiae,SLM3,Synthetic Lethal with Mss4
+SGD:S000002209,YDL051W,S. cerevisiae,LHP1,La-Homologous Protein
+SGD:S000002211,YDL053C,S. cerevisiae,PBP4,Pbp1p Binding Protein
+SGD:S000002214,YDL056W,S. cerevisiae,MBP1,MluI-box Binding Protein
+SGD:S000002217,YDL059C,S. cerevisiae,RAD59,RADiation sensitive
+SGD:S000002228,YDL070W,S. cerevisiae,BDF2,BromoDomain Factor
+SGD:S000002232,YDL074C,S. cerevisiae,BRE1,BREfeldin A sensitivity
+SGD:S000002234,YDL076C,S. cerevisiae,RXT3,
+SGD:S000002255,YDL097C,S. cerevisiae,RPN6,Regulatory Particle Non-ATPase
+SGD:S000002257,YDL099W,S. cerevisiae,BUG1,Binder of USO1 and GRH1
+SGD:S000002259,YDL101C,S. cerevisiae,DUN1,DNA-damage UNinducible
+SGD:S000002273,YDL115C,S. cerevisiae,IWR1,Interacts With RNA polymerase II
+SGD:S000002274,YDL116W,S. cerevisiae,NUP84,NUclear Pore
+SGD:S000002280,YDL122W,S. cerevisiae,UBP1,UBiquitin-specific Protease
+SGD:S000002292,YDL134C,S. cerevisiae,PPH21,Protein PHosphatase
+SGD:S000002294,YDL135C,S. cerevisiae,RDI1,Rho GDP Dissociation Inhibitor
+SGD:S000002299,YDL140C,S. cerevisiae,RPO21,RNA POlymerase
+SGD:S000002313,YDL154W,S. cerevisiae,MSH5,MutS Homolog
+SGD:S000002314,YDL155W,S. cerevisiae,CLB3,CycLin B
+SGD:S000002323,YDL164C,S. cerevisiae,CDC9,Cell Division Cycle
+SGD:S000002324,YDL165W,S. cerevisiae,CDC36,Cell Division Cycle
+SGD:S000002335,YDL176W,S. cerevisiae,GID12,Glucose Induced Degradation deficient
+SGD:S000002344,YDL185W,S. cerevisiae,VMA1,Vacuolar Membrane Atpase
+SGD:S000002347,YDL188C,S. cerevisiae,PPH22,Protein PHosphatase
+SGD:S000002349,YDL190C,S. cerevisiae,UFD2,Ubiquitin Fusion Degradation
+SGD:S000002353,YDL194W,S. cerevisiae,SNF3,Sucrose NonFermenting
+SGD:S000002362,YDL203C,S. cerevisiae,ACK1,Activator of C Kinase
+SGD:S000002372,YDL213C,S. cerevisiae,NOP6,NucleOlar Protein
+SGD:S000002383,YDL224C,S. cerevisiae,WHI4,WHIskey
+SGD:S000002386,YDL227C,S. cerevisiae,HO,HOmothallic switching endonuclease
+SGD:S000002411,YDR004W,S. cerevisiae,RAD57,RADiation sensitive
+SGD:S000002421,YDR014W,S. cerevisiae,RAD61,RADiation sensitive
+SGD:S000002437,YDR030C,S. cerevisiae,RAD28,RADiation sensitive
+SGD:S000002452,YDR045C,S. cerevisiae,RPC11,RNA Polymerase C
+SGD:S000002459,YDR052C,S. cerevisiae,DBF4,DumbBell Former
+SGD:S000002466,YDR059C,S. cerevisiae,UBC5,UBiquitin-Conjugating
+SGD:S000002480,YDR073W,S. cerevisiae,SNF11,Sucrose NonFermenting
+SGD:S000002482,YDR075W,S. cerevisiae,PPH3,Protein PHosphatase
+SGD:S000002483,YDR076W,S. cerevisiae,RAD55,RADiation sensitive
+SGD:S000002499,YDR092W,S. cerevisiae,UBC13,UBiquitin-Conjugating
+SGD:S000002503,YDR096W,S. cerevisiae,GIS1,GIg1-2 Suppressor
+SGD:S000002504,YDR097C,S. cerevisiae,MSH6,MutS Homolog
+SGD:S000002508,YDR101C,S. cerevisiae,ARX1,Associated with Ribosomal eXport complex
+SGD:S000002515,YDR108W,S. cerevisiae,TRS85,TRapp Subunit
+SGD:S000002528,YDR121W,S. cerevisiae,DPB4,DNA Polymerase B (II) subunit
+SGD:S000002534,YDR127W,S. cerevisiae,ARO1,AROmatic amino acid requiring
+SGD:S000002544,YDR137W,S. cerevisiae,RGP1,Reduced Growth Phenotype
+SGD:S000002546,YDR139C,S. cerevisiae,RUB1,Related to UBiquitin
+SGD:S000002550,YDR143C,S. cerevisiae,SAN1,Sir Antagonist
+SGD:S000002552,YDR145W,S. cerevisiae,TAF12,TATA binding protein-Associated Factor
+SGD:S000002553,YDR146C,S. cerevisiae,SWI5,SWItching deficient
+SGD:S000002557,YDR150W,S. cerevisiae,NUM1,NUclear Migration
+SGD:S000002560,YDR153C,S. cerevisiae,ENT5,Epsin N-Terminal homology
+SGD:S000002562,YDR155C,S. cerevisiae,CPR1,Cyclosporin A-sensitive Proline Rotamase
+SGD:S000002563,YDR156W,S. cerevisiae,RPA14,RNA Polymerase A
+SGD:S000002566,YDR159W,S. cerevisiae,SAC3,Suppressor of ACtin
+SGD:S000002583,YDR176W,S. cerevisiae,NGG1,
+SGD:S000002589,YDR181C,S. cerevisiae,SAS4,Something About Silencing
+SGD:S000002598,YDR190C,S. cerevisiae,RVB1,RuVB-like
+SGD:S000002599,YDR191W,S. cerevisiae,HST4,Homolog of SIR Two (SIR2)
+SGD:S000002608,YDR200C,S. cerevisiae,VPS64,Vacuolar Protein Sorting
+SGD:S000002615,YDR207C,S. cerevisiae,UME6,Unscheduled Meiotic gene Expression
+SGD:S000002622,YDR214W,S. cerevisiae,AHA1,Activator of Heat shock protein 90 ATPase
+SGD:S000002625,YDR217C,S. cerevisiae,RAD9,RADiation sensitive
+SGD:S000002633,YDR225W,S. cerevisiae,HTA1,Histone h Two A
+SGD:S000002653,YDR245W,S. cerevisiae,MNN10,MaNNosyltransferase
+SGD:S000002662,YDR254W,S. cerevisiae,CHL4,CHromosome Loss
+SGD:S000002663,YDR255C,S. cerevisiae,RMD5,Required for Meiotic nuclear Division
+SGD:S000002665,YDR257C,S. cerevisiae,RKM4,Ribosomal lysine (K) Methyltransferase
+SGD:S000002668,YDR260C,S. cerevisiae,SWM1,Spore Wall Maturation
+SGD:S000002671,YDR263C,S. cerevisiae,DIN7,DNA Damage INducible
+SGD:S000002687,YDR279W,S. cerevisiae,RNH202,RNase H
+SGD:S000002697,YDR289C,S. cerevisiae,RTT103,Regulator of Ty1 Transposition
+SGD:S000002701,YDR293C,S. cerevisiae,SSD1,Suppressor of SIT4 Deletion
+SGD:S000002719,YDR311W,S. cerevisiae,TFB1,Transcription Factor B
+SGD:S000002722,YDR314C,S. cerevisiae,RAD34,Homologous to RAD4
+SGD:S000002726,YDR318W,S. cerevisiae,MCM21,MiniChromosome Maintenance
+SGD:S000002742,YDR334W,S. cerevisiae,SWR1,SWi2/snf2-Related
+SGD:S000002743,YDR335W,S. cerevisiae,MSN5,Multicopy suppressor of SNf1 mutation
+SGD:S000002767,YDR359C,S. cerevisiae,EAF1,Esa1p-Associated Factor
+SGD:S000002771,YDR363W,S. cerevisiae,ESC2,Establishment of Silent Chromatin
+SGD:S000002777,YDR369C,S. cerevisiae,XRS2,X-Ray Sensitive
+SGD:S000002786,YDR378C,S. cerevisiae,LSM6,Like SM
+SGD:S000002794,YDR386W,S. cerevisiae,MUS81,MMS and UV Sensitive
+SGD:S000002800,YDR392W,S. cerevisiae,SPT3,SuPpressor of Ty's
+SGD:S000002817,YDR409W,S. cerevisiae,SIZ1,SAP and mIZ-finger domain
+SGD:S000002827,YDR419W,S. cerevisiae,RAD30,RADiation sensitive
+SGD:S000002848,YDR440W,S. cerevisiae,DOT1,Disruptor Of Telomeric silencing
+SGD:S000002851,YDR443C,S. cerevisiae,SSN2,Suppressor of SNf1
+SGD:S000002859,YDR451C,S. cerevisiae,YHP1,Yeast Homeo-Protein
+SGD:S000002877,YDR469W,S. cerevisiae,SDC1,"Set1c, homolog of Dpy30 from C.elegans"
+SGD:S000002883,YDR475C,S. cerevisiae,JIP4,Jumonji domain Interacting Protein
+SGD:S000002885,YDR477W,S. cerevisiae,SNF1,Sucrose NonFermenting
+SGD:S000002890,YDR482C,S. cerevisiae,CWC21,Complexed With Cef1p
+SGD:S000002893,YDR485C,S. cerevisiae,VPS72,Vacuolar Protein Sorting
+SGD:S000002896,YDR488C,S. cerevisiae,PAC11,Perish in the Absence of CIN8
+SGD:S000002909,YDR501W,S. cerevisiae,PLM2,PLasmid Maintenance
+SGD:S000002913,YDR505C,S. cerevisiae,PSP1,Polymerase SuPpressor
+SGD:S000002927,YDR519W,S. cerevisiae,FPR2,FKBP Proline Rotamase
+SGD:S000002957,YER007C-A,S. cerevisiae,TMA20,Translation Machinery Associated
+SGD:S000002972,YGL004C,S. cerevisiae,RPN14,Regulatory Particle Non-ATPase
+SGD:S000002987,YGL019W,S. cerevisiae,CKB1,Casein Kinase Beta subunit
+SGD:S000002988,YGL020C,S. cerevisiae,GET1,Guided Entry of Tail-anchored proteins
+SGD:S000002993,YGL025C,S. cerevisiae,PGD1,PolyGlutamine Domain
+SGD:S000003001,YGL033W,S. cerevisiae,HOP2,HOmologous Pairing
+SGD:S000003011,YGL043W,S. cerevisiae,DST1,DNA Strand Transfer
+SGD:S000003026,YGL058W,S. cerevisiae,RAD6,RADiation sensitive
+SGD:S000003034,YGL066W,S. cerevisiae,SGF73,"SaGa associated Factor, 73 kDa"
+SGD:S000003054,YGL086W,S. cerevisiae,MAD1,Mitotic Arrest-Deficient
+SGD:S000003055,YGL087C,S. cerevisiae,MMS2,Methyl MethaneSulfonate sensitivity
+SGD:S000003058,YGL090W,S. cerevisiae,LIF1,Ligase Interacting Factor
+SGD:S000003080,YGL112C,S. cerevisiae,TAF6,TATA binding protein-Associated Factor
+SGD:S000003083,YGL115W,S. cerevisiae,SNF4,Sucrose NonFermenting
+SGD:S000003092,YGL124C,S. cerevisiae,MON1,MONensin sensitivity
+SGD:S000003095,YGL127C,S. cerevisiae,SOH1,Suppressor Of Hpr1
+SGD:S000003101,YGL133W,S. cerevisiae,ITC1,Imitation switch Two Complex
+SGD:S000003118,YGL150C,S. cerevisiae,INO80,INOsitol requiring
+SGD:S000003119,YGL151W,S. cerevisiae,NUT1,Negative regulation of URS Two
+SGD:S000003131,YGL163C,S. cerevisiae,RAD54,RADiation sensitive
+SGD:S000003136,YGL168W,S. cerevisiae,HUR1,HydroxyUrea Resistance
+SGD:S000003141,YGL173C,S. cerevisiae,XRN1,eXoRiboNuclease
+SGD:S000003142,YGL174W,S. cerevisiae,BUD13,BUD site selection
+SGD:S000003143,YGL175C,S. cerevisiae,SAE2,Sporulation in the Absence of spo Eleven
+SGD:S000003151,YGL183C,S. cerevisiae,MND1,Meiotic Nuclear Divisions
+SGD:S000003162,YGL194C,S. cerevisiae,HOS2,Hda One Similar
+SGD:S000003163,YGL195W,S. cerevisiae,GCN1,General Control Nonderepressible
+SGD:S000003181,YGL213C,S. cerevisiae,SKI8,SuperKIller
+SGD:S000003184,YGL216W,S. cerevisiae,KIP3,KInesin related Protein
+SGD:S000003190,YGL222C,S. cerevisiae,EDC1,Enhancer of mRNA DeCapping
+SGD:S000003196,YGL227W,S. cerevisiae,VID30,Vacuolar Import and Degradation
+SGD:S000003213,YGL244W,S. cerevisiae,RTF1,Restores TBP Function
+SGD:S000003218,YGL249W,S. cerevisiae,ZIP2,ZIPping up meiotic chromosomes
+SGD:S000003220,YGL251C,S. cerevisiae,HFM1,Helicase Family Member
+SGD:S000003221,YGL252C,S. cerevisiae,RTG2,ReTroGrade regulation
+SGD:S000003224,YGL255W,S. cerevisiae,ZRT1,Zinc-Regulated Transporter
+SGD:S000003237,YGR005C,S. cerevisiae,TFG2,Transcription Factor G
+SGD:S000003238,YGR006W,S. cerevisiae,PRP18,Pre-mRNA Processing
+SGD:S000003288,YGR056W,S. cerevisiae,RSC1,Remodel the Structure of Chromatin
+SGD:S000003295,YGR063C,S. cerevisiae,SPT4,SuPpressor of Ty's
+SGD:S000003303,YGR071C,S. cerevisiae,ENV11,late ENdosome and Vacuole interface function
+SGD:S000003310,YGR078C,S. cerevisiae,PAC10,Perish in the Absence of Cin8p
+SGD:S000003318,YGR086C,S. cerevisiae,PIL1,Phosphorylation Inhibited by Long chain bases
+SGD:S000003329,YGR097W,S. cerevisiae,ASK10,Activator of SKn7
+SGD:S000003340,YGR108W,S. cerevisiae,CLB1,CycLin B
+SGD:S000003341,YGR109C,S. cerevisiae,CLB6,CycLin B
+SGD:S000003366,YGR134W,S. cerevisiae,CAF130,CCR4 Associated Factor
+SGD:S000003367,YGR135W,S. cerevisiae,PRE9,PRoteinase yscE
+SGD:S000003388,YGR156W,S. cerevisiae,PTI1,PTa1p Interacting protein
+SGD:S000003413,YGR181W,S. cerevisiae,TIM13,Translocase of the Inner Mitochondrial membrane
+SGD:S000003416,YGR184C,S. cerevisiae,UBR1,
+SGD:S000003418,YGR186W,S. cerevisiae,TFG1,Transcription Factor G
+SGD:S000003420,YGR188C,S. cerevisiae,BUB1,Budding Uninhibited by Benzimidazole
+SGD:S000003432,YGR200C,S. cerevisiae,ELP2,ELongator Protein
+SGD:S000003440,YGR208W,S. cerevisiae,SER2,SERine requiring
+SGD:S000003453,YGR221C,S. cerevisiae,TOS2,Target Of Sbf
+SGD:S000003478,YGR246C,S. cerevisiae,BRF1,B-Related Factor
+SGD:S000003484,YGR252W,S. cerevisiae,GCN5,General Control Nonderepressible
+SGD:S000003490,YGR258C,S. cerevisiae,RAD2,RADiation sensitivity
+SGD:S000003502,YGR270W,S. cerevisiae,YTA7,Yeast Tat-binding Analog
+SGD:S000003506,YGR274C,S. cerevisiae,TAF1,TATA binding protein-Associated Factor
+SGD:S000003507,YGR275W,S. cerevisiae,RTT102,Regulator of Ty1 Transposition
+SGD:S000003550,YJL013C,S. cerevisiae,MAD3,Mitotic Arrest-Deficient
+SGD:S000003567,YJL030W,S. cerevisiae,MAD2,Mitotic Arrest-Deficient
+SGD:S000003583,YJL047C,S. cerevisiae,RTT101,Regulator of Ty1 Transposition
+SGD:S000003617,YJL081C,S. cerevisiae,ARP4,Actin-Related Protein
+SGD:S000003626,YJL090C,S. cerevisiae,DPB11,DNA Polymerase B (II)
+SGD:S000003628,YJL092W,S. cerevisiae,SRS2,Suppressor of Rad Six
+SGD:S000003634,YJL098W,S. cerevisiae,SAP185,Sit4 Associated Protein
+SGD:S000003641,YJL105W,S. cerevisiae,SET4,SET domain-containing
+SGD:S000003651,YJL115W,S. cerevisiae,ASF1,Anti-Silencing Function
+SGD:S000003658,YJL122W,S. cerevisiae,ALB1,Arx1 Little Brother
+SGD:S000003660,YJL124C,S. cerevisiae,LSM1,Like SM
+SGD:S000003676,YJL140W,S. cerevisiae,RPB4,RNA Polymerase B
+SGD:S000003684,YJL148W,S. cerevisiae,RPA34,RNA Polymerase A
+SGD:S000003704,YJL168C,S. cerevisiae,SET2,SET domain-containing
+SGD:S000003712,YJL176C,S. cerevisiae,SWI3,SWItching deficient
+SGD:S000003715,YJL179W,S. cerevisiae,PFD1,PreFolDin
+SGD:S000003717,YJL181W,S. cerevisiae,RBH1,Ran Binding domain Homolog
+SGD:S000003719,YJL183W,S. cerevisiae,MNN11,MaNNosyltransferase
+SGD:S000003720,YJL184W,S. cerevisiae,GON7,
+SGD:S000003723,YJL187C,S. cerevisiae,SWE1,Saccharomyces WEe1
+SGD:S000003733,YJL197W,S. cerevisiae,UBP12,UBiquitin-specific Protease
+SGD:S000003766,YJR006W,S. cerevisiae,POL31,POLymerase
+SGD:S000003775,YJR014W,S. cerevisiae,TMA22,Translation Machinery Associated
+SGD:S000003782,YJR021C,S. cerevisiae,REC107,RECombination
+SGD:S000003793,YJR032W,S. cerevisiae,CPR7,Cyclosporin-sensitive Proline Rotamase
+SGD:S000003796,YJR035W,S. cerevisiae,RAD26,RADiation sensitive
+SGD:S000003797,YJR036C,S. cerevisiae,HUL4,Hect Ubiquitin Ligase
+SGD:S000003804,YJR043C,S. cerevisiae,POL32,POLymerase
+SGD:S000003813,YJR052W,S. cerevisiae,RAD7,RADiation sensitive
+SGD:S000003814,YJR053W,S. cerevisiae,BFA1,Byr-Four-Alike
+SGD:S000003834,YJR073C,S. cerevisiae,OPI3,OverProducer of Inositol
+SGD:S000003842,YJR082C,S. cerevisiae,EAF6,Esa1p-Associated Factor
+SGD:S000003860,YJR099W,S. cerevisiae,YUH1,Yeast Ubiquitin Hydrolase
+SGD:S000003865,YJR104C,S. cerevisiae,SOD1,SuperOxide Dismutase
+SGD:S000003880,YJR119C,S. cerevisiae,JHD2,JmjC domain-containing Histone Demethylase
+SGD:S000003887,YJR126C,S. cerevisiae,VPS70,Vacuolar Protein Sorting
+SGD:S000003896,YJR135C,S. cerevisiae,MCM22,MiniChromosome Maintenance
+SGD:S000003901,YJR140C,S. cerevisiae,HIR3,HIstone Regulation
+SGD:S000003905,YJR144W,S. cerevisiae,MGM101,Mitochondrial Genome Maintenance
+SGD:S000003925,YLL002W,S. cerevisiae,RTT109,Regulator of Ty1 Transposition
+SGD:S000003962,YLL039C,S. cerevisiae,UBI4,Ubiquitin
+SGD:S000003995,YLR005W,S. cerevisiae,SSL1,Suppressor of Stem-Loop mutation
+SGD:S000004005,YLR015W,S. cerevisiae,BRE2,BREfeldin A sensitivity
+SGD:S000004014,YLR024C,S. cerevisiae,UBR2,
+SGD:S000004022,YLR032W,S. cerevisiae,RAD5,RADiation sensitive
+SGD:S000004023,YLR033W,S. cerevisiae,RSC58,Remodel the Structure of Chromatin
+SGD:S000004025,YLR035C,S. cerevisiae,MLH2,MutL Homolog
+SGD:S000004029,YLR039C,S. cerevisiae,RIC1,RIbosome Control
+SGD:S000004034,YLR044C,S. cerevisiae,PDC1,Pyruvate DeCarboxylase
+SGD:S000004042,YLR052W,S. cerevisiae,IES3,Ino Eighty Subunit
+SGD:S000004045,YLR055C,S. cerevisiae,SPT8,SuPpressor of Ty
+SGD:S000004046,YLR056W,S. cerevisiae,ERG3,ERGosterol biosynthesis
+SGD:S000004069,YLR079W,S. cerevisiae,SIC1,Substrate/Subunit Inhibitor of Cyclin-dependent protein kinase
+SGD:S000004072,YLR082C,S. cerevisiae,SRL2,Suppressor of Rad53 null Lethality
+SGD:S000004075,YLR085C,S. cerevisiae,ARP6,Actin-Related Protein
+SGD:S000004077,YLR087C,S. cerevisiae,CSF1,Cold Sensitive for Fermentation
+SGD:S000004085,YLR095C,S. cerevisiae,IOC2,Iswi One Complex
+SGD:S000004092,YLR102C,S. cerevisiae,APC9,Anaphase Promoting Complex
+SGD:S000004125,YLR135W,S. cerevisiae,SLX4,Synthetic Lethal of unknown (X) function
+SGD:S000004170,YLR180W,S. cerevisiae,SAM1,S-AdenosylMethionine requiring
+SGD:S000004172,YLR182W,S. cerevisiae,SWI6,SWItching deficient
+SGD:S000004180,YLR190W,S. cerevisiae,MMR1,Mitochondrial Myo2p Receptor-related
+SGD:S000004190,YLR200W,S. cerevisiae,YKE2,Yeast ortholog of mouse KE2
+SGD:S000004200,YLR210W,S. cerevisiae,CLB4,CycLin B
+SGD:S000004206,YLR216C,S. cerevisiae,CPR6,Cyclosporin-sensitive Proline Rotamase
+SGD:S000004208,YLR218C,S. cerevisiae,COA4,Cytochrome Oxidase Assembly factor
+SGD:S000004223,YLR233C,S. cerevisiae,EST1,Ever Shorter Telomeres
+SGD:S000004224,YLR234W,S. cerevisiae,TOP3,TOPoisomerase
+SGD:S000004237,YLR247C,S. cerevisiae,IRC20,Increased Recombination Centers
+SGD:S000004252,YLR262C,S. cerevisiae,YPT6,Yeast Protein Two
+SGD:S000004253,YLR263W,S. cerevisiae,RED1,REDuctional division
+SGD:S000004255,YLR265C,S. cerevisiae,NEJ1,Nonhomologous End-Joining defective
+SGD:S000004258,YLR268W,S. cerevisiae,SEC22,SECretory
+SGD:S000004268,YLR278C,S. cerevisiae,,
+SGD:S000004279,YLR288C,S. cerevisiae,MEC3,Mitosis Entry Checkpoint
+SGD:S000004297,YLR306W,S. cerevisiae,UBC12,UBiquitin-Conjugating
+SGD:S000004312,YLR320W,S. cerevisiae,MMS22,Methyl MethaneSulfonate sensitivity
+SGD:S000004321,YLR329W,S. cerevisiae,REC102,RECombination
+SGD:S000004329,YLR337C,S. cerevisiae,VRP1,VeRProlin
+SGD:S000004342,YLR350W,S. cerevisiae,ORM2,
+SGD:S000004349,YLR357W,S. cerevisiae,RSC2,Remodel the Structure of Chromatin
+SGD:S000004365,YLR373C,S. cerevisiae,VID22,Vacuolar Import and Degradation
+SGD:S000004368,YLR376C,S. cerevisiae,PSY3,Platinum SensitivitY
+SGD:S000004373,YLR381W,S. cerevisiae,CTF3,Chromosome Transmission Fidelity
+SGD:S000004376,YLR384C,S. cerevisiae,IKI3,Insensitive to KIller toxin
+SGD:S000004377,YLR385C,S. cerevisiae,SWC7,SWr Complex
+SGD:S000004386,YLR394W,S. cerevisiae,CST9,Chromosome STability
+SGD:S000004390,YLR398C,S. cerevisiae,SKI2,SuperKIller
+SGD:S000004395,YLR403W,S. cerevisiae,SFP1,Split Finger Protein
+SGD:S000004410,YLR418C,S. cerevisiae,CDC73,Cell Division Cycle
+SGD:S000004413,YLR421C,S. cerevisiae,RPN13,Regulatory Particle Non-ATPase
+SGD:S000004441,YLR449W,S. cerevisiae,FPR4,FKBP Proline Rotamase (isomerase)
+SGD:S000004445,YLR453C,S. cerevisiae,RIF2,Rap1p-Interacting Factor
+SGD:S000004447,YLR455W,S. cerevisiae,PDP3,PWWP Domain-containing Protein
+SGD:S000004467,YML008C,S. cerevisiae,ERG6,ERGosterol biosynthesis
+SGD:S000004472,YML011C,S. cerevisiae,RAD33,RADiation sensitive
+SGD:S000004483,YML021C,S. cerevisiae,UNG1,Uracil DNA N-Glycosylase
+SGD:S000004490,YML028W,S. cerevisiae,TSA1,Thiol-Specific Antioxidant
+SGD:S000004492,YML030W,S. cerevisiae,RCF1,Respiratory superComplex Factor
+SGD:S000004494,YML032C,S. cerevisiae,RAD52,RADiation sensitive
+SGD:S000004497,YML034W,S. cerevisiae,SRC1,Spliced mRNA and Cell cycle regulated gene
+SGD:S000004505,YML041C,S. cerevisiae,VPS71,Vacuolar Protein Sorting
+SGD:S000004525,YML060W,S. cerevisiae,OGG1,8-OxoGuanine Glycosylase/lyase
+SGD:S000004527,YML062C,S. cerevisiae,MFT1,Mitochondrial Fusion Targeting
+SGD:S000004534,YML069W,S. cerevisiae,POB3,POl1 Binding
+SGD:S000004536,YML071C,S. cerevisiae,COG8,Conserved Oligomeric Golgi complex
+SGD:S000004539,YML074C,S. cerevisiae,FPR3,Fk 506-sensitive Proline Rotamase
+SGD:S000004559,YML094W,S. cerevisiae,GIM5,Gene Involved in Microtubule biogenesis
+SGD:S000004560,YML095C,S. cerevisiae,RAD10,RADiation sensitive
+SGD:S000004564,YML098W,S. cerevisiae,TAF13,TATA binding protein-Associated Factor
+SGD:S000004570,YML102W,S. cerevisiae,CAC2,Chromatin Assembly Complex
+SGD:S000004574,YML106W,S. cerevisiae,URA5,URAcil requiring
+SGD:S000004577,YML109W,S. cerevisiae,ZDS2,Zillion Different Screens
+SGD:S000004579,YML111W,S. cerevisiae,BUL2,Binds Ubiquitin Ligase
+SGD:S000004588,YML119W,S. cerevisiae,,
+SGD:S000004590,YML121W,S. cerevisiae,GTR1,GTp binding protein Resemblance
+SGD:S000004593,YML124C,S. cerevisiae,TUB3,TUBulin
+SGD:S000004596,YML127W,S. cerevisiae,RSC9,Remodel the Structure of Chromatin
+SGD:S000004597,YML128C,S. cerevisiae,MSC1,Meiotic Sister-Chromatid recombination
+SGD:S000004603,YMR001C,S. cerevisiae,CDC5,Cell Division Cycle
+SGD:S000004605,YMR003W,S. cerevisiae,AIM34,Altered Inheritance rate of Mitochondria
+SGD:S000004607,YMR005W,S. cerevisiae,TAF4,TATA binding protein-Associated Factor
+SGD:S000004617,YMR015C,S. cerevisiae,ERG5,ERGosterol biosynthesis
+SGD:S000004623,YMR021C,S. cerevisiae,MAC1,Metal binding ACtivator
+SGD:S000004624,YMR022W,S. cerevisiae,UBC7,UBiquitin-Conjugating enzyme
+SGD:S000004639,YMR036C,S. cerevisiae,MIH1,Mitotic Inducer Homolog
+SGD:S000004641,YMR038C,S. cerevisiae,CCS1,Copper Chaperone for SOD1
+SGD:S000004642,YMR039C,S. cerevisiae,SUB1,SUppressor of TFIIB mutations
+SGD:S000004647,YMR044W,S. cerevisiae,IOC4,Iswi One Complex
+SGD:S000004651,YMR048W,S. cerevisiae,CSM3,Chromosome Segregation in Meiosis
+SGD:S000004659,YMR055C,S. cerevisiae,BUB2,Budding Uninhibited by Benzimidazole
+SGD:S000004664,YMR060C,S. cerevisiae,SAM37,Sorting and Assembly Machinery
+SGD:S000004680,YMR075W,S. cerevisiae,RCO1,
+SGD:S000004683,YMR078C,S. cerevisiae,CTF18,Chromosome Transmission Fidelity
+SGD:S000004706,YMR100W,S. cerevisiae,MUB1,MUlti Budding
+SGD:S000004712,YMR106C,S. cerevisiae,YKU80,Yeast KU protein
+SGD:S000004718,YMR112C,S. cerevisiae,MED11,MEDiator complex
+SGD:S000004734,YMR127C,S. cerevisiae,SAS2,Something About Silencing
+SGD:S000004740,YMR133W,S. cerevisiae,REC114,RECombination
+SGD:S000004742,YMR135C,S. cerevisiae,GID8,Glucose Induced Degradation deficient
+SGD:S000004745,YMR137C,S. cerevisiae,PSO2,PSOralen derivative sensitive
+SGD:S000004746,YMR138W,S. cerevisiae,CIN4,Chromosome INstability
+SGD:S000004752,YMR144W,S. cerevisiae,FDO1,Forkhead one interacting protein involved in DOnor preference
+SGD:S000004765,YMR156C,S. cerevisiae,TPP1,Three Prime Phosphatase
+SGD:S000004777,YMR167W,S. cerevisiae,MLH1,MutL Homolog
+SGD:S000004784,YMR173W,S. cerevisiae,DDR48,DNA Damage Responsive
+SGD:S000004788,YMR176W,S. cerevisiae,ECM5,ExtraCellular Mutant
+SGD:S000004791,YMR179W,S. cerevisiae,SPT21,SuPpressor of Ty
+SGD:S000004802,YMR190C,S. cerevisiae,SGS1,Slow Growth Suppressor
+SGD:S000004811,YMR198W,S. cerevisiae,CIK1,Chromosome Instability and Karyogamy
+SGD:S000004812,YMR199W,S. cerevisiae,CLN1,CycLiN
+SGD:S000004814,YMR201C,S. cerevisiae,RAD14,RADiation sensitive
+SGD:S000004829,YMR216C,S. cerevisiae,SKY1,SRPK1-like Kinase in Yeast
+SGD:S000004832,YMR219W,S. cerevisiae,ESC1,Establishes Silent Chromatin
+SGD:S000004836,YMR223W,S. cerevisiae,UBP8,UBiquitin-specific processing Protease
+SGD:S000004837,YMR224C,S. cerevisiae,MRE11,Meiotic REcombination
+SGD:S000004840,YMR227C,S. cerevisiae,TAF7,TATA binding protein-Associated Factor
+SGD:S000004847,YMR234W,S. cerevisiae,RNH1,RNase H
+SGD:S000004849,YMR236W,S. cerevisiae,TAF9,TATA binding protein-Associated Factor
+SGD:S000004876,YMR263W,S. cerevisiae,SAP30,Sin3-Associated Polypeptide
+SGD:S000004885,YMR272C,S. cerevisiae,SCS7,Suppressor of Ca2+ Sensitivity
+SGD:S000004886,YMR273C,S. cerevisiae,ZDS1,Zillion Different Screens
+SGD:S000004888,YMR275C,S. cerevisiae,BUL1,Binds Ubiquitin Ligase
+SGD:S000004889,YMR276W,S. cerevisiae,DSK2,Dominant Suppressor of kar1
+SGD:S000004897,YMR284W,S. cerevisiae,YKU70,Yeast KU protein
+SGD:S000004920,YMR304W,S. cerevisiae,UBP15,UBiquitin-specific Protease
+SGD:S000004929,YMR312W,S. cerevisiae,ELP6,ELongator Protein
+SGD:S000004949,YNL004W,S. cerevisiae,HRB1,Hypothetical RNA-Binding protein
+SGD:S000004966,YNL021W,S. cerevisiae,HDA1,Histone DeAcetylase
+SGD:S000004970,YNL025C,S. cerevisiae,SSN8,Suppressor of SNf1
+SGD:S000004975,YNL030W,S. cerevisiae,HHF2,Histone H Four
+SGD:S000004976,YNL031C,S. cerevisiae,HHT2,Histone H Three
+SGD:S000005012,YNL068C,S. cerevisiae,FKH2,ForK head Homolog
+SGD:S000005016,YNL072W,S. cerevisiae,RNH201,RNase H
+SGD:S000005026,YNL082W,S. cerevisiae,PMS1,PostMeiotic Segregation
+SGD:S000005029,YNL085W,S. cerevisiae,MKT1,Maintenance of K2 Killer Toxin
+SGD:S000005041,YNL097C,S. cerevisiae,PHO23,PHOsphate metabolism
+SGD:S000005042,YNL098C,S. cerevisiae,RAS2,homologous to RAS proto-oncogene
+SGD:S000005051,YNL107W,S. cerevisiae,YAF9,Yeast homolog of the human leukemogenic protein AF9
+SGD:S000005080,YNL136W,S. cerevisiae,EAF7,Esa1-Associated Factor
+SGD:S000005083,YNL139C,S. cerevisiae,THO2,suppressor of the Transcriptional defect of Hpr1 by Overexpression
+SGD:S000005091,YNL147W,S. cerevisiae,LSM7,Like SM
+SGD:S000005095,YNL151C,S. cerevisiae,RPC31,RNA Polymerase C
+SGD:S000005097,YNL153C,S. cerevisiae,GIM3,Gene Involved in Microtubule biogenesis
+SGD:S000005143,YNL199C,S. cerevisiae,GCR2,GlyColysis Regulation
+SGD:S000005145,YNL201C,S. cerevisiae,PSY2,Platinum SensitivitY
+SGD:S000005150,YNL206C,S. cerevisiae,RTT106,Regulator of Ty1 Transposition
+SGD:S000005159,YNL215W,S. cerevisiae,IES2,Ino Eighty Subunit
+SGD:S000005160,YNL216W,S. cerevisiae,RAP1,Repressor/Activator site binding Protein
+SGD:S000005162,YNL218W,S. cerevisiae,MGS1,Maintenance of Genome Stability
+SGD:S000005166,YNL222W,S. cerevisiae,SSU72,"Suppressor of SUa7, gene 2"
+SGD:S000005168,YNL224C,S. cerevisiae,SQS1,SQuelch of Splicing suppression
+SGD:S000005171,YNL227C,S. cerevisiae,JJJ1,J-protein (Type III)
+SGD:S000005180,YNL236W,S. cerevisiae,SIN4,Switch INdependent
+SGD:S000005182,YNL238W,S. cerevisiae,KEX2,Killer EXpression defective
+SGD:S000005190,YNL246W,S. cerevisiae,VPS75,Vacuolar Protein Sorting
+SGD:S000005192,YNL248C,S. cerevisiae,RPA49,RNA Polymerase A
+SGD:S000005194,YNL250W,S. cerevisiae,RAD50,RADiation sensitive
+SGD:S000005195,YNL251C,S. cerevisiae,NRD1,Nuclear pre-mRNA Down-regulation
+SGD:S000005197,YNL253W,S. cerevisiae,TEX1,TrEX component
+SGD:S000005217,YNL273W,S. cerevisiae,TOF1,TOpoisomerase I-interacting Factor
+SGD:S000005232,YNL288W,S. cerevisiae,CAF40,CCR4 Associated Factor
+SGD:S000005234,YNL290W,S. cerevisiae,RFC3,Replication Factor C
+SGD:S000005238,YNL294C,S. cerevisiae,RIM21,Regulator of IME2
+SGD:S000005241,YNL297C,S. cerevisiae,MON2,MONensin sensitivity
+SGD:S000005242,YNL298W,S. cerevisiae,CLA4,CLn Activity dependant
+SGD:S000005243,YNL299W,S. cerevisiae,TRF5,Topoisomerase one-Related Function
+SGD:S000005251,YNL307C,S. cerevisiae,MCK1,Meiosis and Centromere regulatory Kinase
+SGD:S000005256,YNL312W,S. cerevisiae,RFA2,Replication Factor A
+SGD:S000005259,YNL315C,S. cerevisiae,ATP11,ATP synthase
+SGD:S000005267,YNL323W,S. cerevisiae,LEM3,Ligand-Effect Modulator
+SGD:S000005274,YNL330C,S. cerevisiae,RPD3,Reduced Potassium Dependency
+SGD:S000005286,YNR003C,S. cerevisiae,RPC34,RNA Polymerase C
+SGD:S000005293,YNR010W,S. cerevisiae,CSE2,Chromosome SEgregation
+SGD:S000005331,YNR048W,S. cerevisiae,,
+SGD:S000005334,YNR051C,S. cerevisiae,BRE5,BREfeldin A sensitivity
+SGD:S000005361,YOL001W,S. cerevisiae,PHO80,PHOsphate metabolism
+SGD:S000005364,YOL004W,S. cerevisiae,SIN3,Switch INdependent
+SGD:S000005366,YOL006C,S. cerevisiae,TOP1,TOPoisomerase
+SGD:S000005372,YOL012C,S. cerevisiae,HTZ1,Histone Two A Z
+SGD:S000005377,YOL017W,S. cerevisiae,ESC8,Establishes Silent Chromatin
+SGD:S000005403,YOL043C,S. cerevisiae,NTG2,eNdonuclease Three-like Glycosylase
+SGD:S000005411,YOL051W,S. cerevisiae,GAL11,GALactose metabolism
+SGD:S000005415,YOL054W,S. cerevisiae,PSH1,Pob3/Spt16 Histone associated
+SGD:S000005428,YOL067C,S. cerevisiae,RTG1,ReTroGrade regulation
+SGD:S000005429,YOL068C,S. cerevisiae,HST1,Homolog of SIR Two (SIR2)
+SGD:S000005433,YOL072W,S. cerevisiae,THP1,Tho2/Hpr1 Phenotype
+SGD:S000005441,YOL081W,S. cerevisiae,IRA2,Inhibitory Regulator of the RAS-cAMP pathway
+SGD:S000005450,YOL090W,S. cerevisiae,MSH2,MutS Homolog
+SGD:S000005454,YOL094C,S. cerevisiae,RFC4,Replication Factor C
+SGD:S000005464,YOL104C,S. cerevisiae,NDJ1,NonDisJunction
+SGD:S000005468,YOL108C,S. cerevisiae,INO4,INOsitol requiring
+SGD:S000005505,YOL145C,S. cerevisiae,CTR9,Cln Three (CLN3) Requiring
+SGD:S000005527,YOR001W,S. cerevisiae,RRP6,Ribosomal RNA Processing
+SGD:S000005531,YOR005C,S. cerevisiae,DNL4,DNA Ligase
+SGD:S000005540,YOR014W,S. cerevisiae,RTS1,Rox Three Suppressor
+SGD:S000005549,YOR023C,S. cerevisiae,AHC1,Ada Histone acetyltransferase complex Component
+SGD:S000005551,YOR025W,S. cerevisiae,HST3,Homolog of SIR Two (SIR2)
+SGD:S000005552,YOR026W,S. cerevisiae,BUB3,Budding Uninhibited by Benzimidazole
+SGD:S000005559,YOR033C,S. cerevisiae,EXO1,EXOnuclease
+SGD:S000005564,YOR038C,S. cerevisiae,HIR2,HIstone Regulation
+SGD:S000005565,YOR039W,S. cerevisiae,CKB2,Casein Kinase Beta' subunit
+SGD:S000005569,YOR043W,S. cerevisiae,WHI2,WHIskey
+SGD:S000005584,YOR058C,S. cerevisiae,ASE1,Anaphase Spindle Elongation
+SGD:S000005587,YOR061W,S. cerevisiae,CKA2,Casein Kinase Alpha' subunit
+SGD:S000005599,YOR073W,S. cerevisiae,SGO1,"ShuGOshin (Japanese for ""guardian spirit"")"
+SGD:S000005615,YOR089C,S. cerevisiae,VPS21,Vacuolar Protein Sorting
+SGD:S000005632,YOR106W,S. cerevisiae,VAM3,VAcuolar Morphogenesis
+SGD:S000005649,YOR123C,S. cerevisiae,LEO1,LEft Open reading frame
+SGD:S000005650,YOR124C,S. cerevisiae,UBP2,UBiquitin-specific Protease
+SGD:S000005667,YOR141C,S. cerevisiae,ARP8,Actin-Related Protein
+SGD:S000005670,YOR144C,S. cerevisiae,ELG1,Enhanced Level of Genomic instability
+SGD:S000005698,YOR172W,S. cerevisiae,YRM1,Yeast Reveromycin resistance Modulator
+SGD:S000005700,YOR174W,S. cerevisiae,MED4,MEDiator complex
+SGD:S000005710,YOR184W,S. cerevisiae,SER1,SERine requiring
+SGD:S000005715,YOR189W,S. cerevisiae,IES4,Ino Eighty Subunit
+SGD:S000005717,YOR191W,S. cerevisiae,ULS1,Ubiquitin Ligase for SUMO conjugates
+SGD:S000005721,YOR195W,S. cerevisiae,SLK19,Synthetic Lethal Kar3p
+SGD:S000005733,YOR207C,S. cerevisiae,RET1,Reduced Efficiency of Termination
+SGD:S000005739,YOR213C,S. cerevisiae,SAS5,Something About Silencing
+SGD:S000005743,YOR217W,S. cerevisiae,RFC1,Replication Factor C
+SGD:S000005791,YOR265W,S. cerevisiae,RBL2,Rescues Beta-tubulin Lethality
+SGD:S000005795,YOR269W,S. cerevisiae,PAC1,Perish in the Absence of Cin8p
+SGD:S000005823,YOR297C,S. cerevisiae,TIM18,Translocase of the Inner Mitochondrial membrane
+SGD:S000005831,YOR304W,S. cerevisiae,ISW2,Imitation SWitch subfamily
+SGD:S000005835,YOR308C,S. cerevisiae,SNU66,Small NUclear ribonucleoprotein associated
+SGD:S000005857,YOR330C,S. cerevisiae,MIP1,MItochondrial DNA Polymerase
+SGD:S000005865,YOR338W,S. cerevisiae,,
+SGD:S000005866,YOR339C,S. cerevisiae,UBC11,UBiquitin Carrier
+SGD:S000005867,YOR340C,S. cerevisiae,RPA43,RNA Polymerase A
+SGD:S000005868,YOR341W,S. cerevisiae,RPA190,RNA Polymerase A
+SGD:S000005873,YOR346W,S. cerevisiae,REV1,REVersionless
+SGD:S000005876,YOR349W,S. cerevisiae,CIN1,Chromosome INstability
+SGD:S000005878,YOR351C,S. cerevisiae,MEK1,MEiotic Kinase
+SGD:S000005895,YOR368W,S. cerevisiae,RAD17,RADiation sensitive
+SGD:S000005913,YOR386W,S. cerevisiae,PHR1,PHotoreactivation Repair deficient
+SGD:S000005922,YPL001W,S. cerevisiae,HAT1,Histone AcetylTransferase
+SGD:S000005929,YPL008W,S. cerevisiae,CHL1,CHromosome Loss
+SGD:S000005936,YPL015C,S. cerevisiae,HST2,Homolog of SIR Two (SIR2)
+SGD:S000005939,YPL018W,S. cerevisiae,CTF19,Chromosome Transmission Fidelity
+SGD:S000005943,YPL022W,S. cerevisiae,RAD1,RADiation sensitive
+SGD:S000005945,YPL024W,S. cerevisiae,RMI1,RecQ Mediated genome Instability
+SGD:S000005954,YPL033C,S. cerevisiae,SRL4,Suppressor of Rad53 null Lethality or Suppressor of Rad53 and Lcd1
+SGD:S000005963,YPL042C,S. cerevisiae,SSN3,Suppressor of SNf1
+SGD:S000005967,YPL046C,S. cerevisiae,ELC1,ELongin C
+SGD:S000005968,YPL047W,S. cerevisiae,SGF11,SaGa associated Factor 11kDa
+SGD:S000005976,YPL055C,S. cerevisiae,LGE1,LarGE cells
+SGD:S000005978,YPL057C,S. cerevisiae,SUR1,SUppressor of Rvs161 and rvs167 mutations
+SGD:S000006007,YPL086C,S. cerevisiae,ELP3,ELongator Protein
+SGD:S000006022,YPL101W,S. cerevisiae,ELP4,ELongator Protein
+SGD:S000006034,YPL113C,S. cerevisiae,,
+SGD:S000006037,YPL116W,S. cerevisiae,HOS3,Hda One Similar
+SGD:S000006042,YPL121C,S. cerevisiae,MEI5,MEIosis
+SGD:S000006043,YPL122C,S. cerevisiae,TFB2,Transcription Factor B
+SGD:S000006048,YPL127C,S. cerevisiae,HHO1,Histone H One
+SGD:S000006049,YPL128C,S. cerevisiae,TBF1,TTAGGG repeat-Binding Factor
+SGD:S000006050,YPL129W,S. cerevisiae,TAF14,TATA binding protein-Associated Factor
+SGD:S000006059,YPL138C,S. cerevisiae,SPP1,"Set1c, Phd finger Protein"
+SGD:S000006060,YPL139C,S. cerevisiae,UME1,Unscheduled Meiotic gene Expression
+SGD:S000006071,YPL150W,S. cerevisiae,,
+SGD:S000006073,YPL152W,S. cerevisiae,RRD2,Resistant to Rapamycin Deletion
+SGD:S000006074,YPL153C,S. cerevisiae,RAD53,RADiation sensitive
+SGD:S000006076,YPL155C,S. cerevisiae,KIP2,KInesin related Protein
+SGD:S000006085,YPL164C,S. cerevisiae,MLH3,MutL Homolog
+SGD:S000006086,YPL165C,S. cerevisiae,SET6,SET domain-containing
+SGD:S000006088,YPL167C,S. cerevisiae,REV3,REVersionless
+SGD:S000006101,YPL180W,S. cerevisiae,TCO89,Tor Complex One
+SGD:S000006102,YPL181W,S. cerevisiae,CTI6,Cyc8-Tup1 Interacting protein
+SGD:S000006115,YPL194W,S. cerevisiae,DDC1,DNA Damage Checkpoint
+SGD:S000006135,YPL214C,S. cerevisiae,THI6,THIamine biosynthesis
+SGD:S000006147,YPL226W,S. cerevisiae,NEW1,Nu+
+SGD:S000006156,YPL235W,S. cerevisiae,RVB2,RuVB-like
+SGD:S000006162,YPL241C,S. cerevisiae,CIN2,Chromosome INstability
+SGD:S000006169,YPL248C,S. cerevisiae,GAL4,GALactose metabolism
+SGD:S000006174,YPL253C,S. cerevisiae,VIK1,Vegetative Interaction with Kar3p
+SGD:S000006175,YPL254W,S. cerevisiae,HFI1,Histone H2A Functional Interactor
+SGD:S000006177,YPL256C,S. cerevisiae,CLN2,CycLiN
+SGD:S000006190,YPL269W,S. cerevisiae,KAR9,KARyogamy
+SGD:S000006211,YPR007C,S. cerevisiae,REC8,RECombination
+SGD:S000006222,YPR018W,S. cerevisiae,RLF2,Rap1 protein Localization Factor
+SGD:S000006227,YPR023C,S. cerevisiae,EAF3,Esa1p-Associated Factor
+SGD:S000006235,YPR031W,S. cerevisiae,NTO1,NuA Three Orf
+SGD:S000006250,YPR046W,S. cerevisiae,MCM16,MiniChromosome Maintenance
+SGD:S000006256,YPR052C,S. cerevisiae,NHP6A,Non-Histone Protein
+SGD:S000006270,YPR066W,S. cerevisiae,UBA3,UBiquitin-like protein-Activating enzyme
+SGD:S000006272,YPR068C,S. cerevisiae,HOS1,Hda One Similar
+SGD:S000006274,YPR070W,S. cerevisiae,MED1,MEDiator complex
+SGD:S000006279,YPR075C,S. cerevisiae,OPY2,Overproduction-induced Pheromone-resistant Yeast
+SGD:S000006297,YPR093C,S. cerevisiae,ASR1,Alcohol Sensitive Ring/PHD finger
+SGD:S000006314,YPR110C,S. cerevisiae,RPC40,RNA Polymerase C
+SGD:S000006323,YPR119W,S. cerevisiae,CLB2,CycLin B
+SGD:S000006324,YPR120C,S. cerevisiae,CLB5,CycLin B
+SGD:S000006337,YPR133C,S. cerevisiae,SPN1,Suppresses Postrecruitment functions gene Number 1
+SGD:S000006339,YPR135W,S. cerevisiae,CTF4,Chromosome Transmission Fidelity
+SGD:S000006345,YPR141C,S. cerevisiae,KAR3,KARyogamy
+SGD:S000006365,YPR161C,S. cerevisiae,SGV1,Suppressor of Gpa1-Val50 mutation
+SGD:S000006368,YPR164W,S. cerevisiae,MMS1,Methyl MethaneSulfonate sensitivity
+SGD:S000006390,YPR186C,S. cerevisiae,PZF1,Putative Zinc Finger
+SGD:S000006391,YPR187W,S. cerevisiae,RPO26,RNA POlymerase
+SGD:S000006393,YPR189W,S. cerevisiae,SKI3,SuperKIller
+SGD:S000006439,YCR020W-B,S. cerevisiae,HTL1,High-Temperature Lethal
+SGD:S000007222,YCR028C-A,S. cerevisiae,RIM1,Replication In Mitochondria
+SGD:S000007235,YDR363W-A,S. cerevisiae,SEM1,Suppressor of Exocyst Mutations
+SGD:S000007243,YKL053C-A,S. cerevisiae,MDM35,Mitochondrial Distribution and Morphology
+SGD:S000028510,YBR111W-A,S. cerevisiae,SUS1,Sl gene Upstream of ySa1

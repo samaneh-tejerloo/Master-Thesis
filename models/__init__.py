@@ -1,0 +1,1 @@
+from models.simple_gcn import SimpleGCN
