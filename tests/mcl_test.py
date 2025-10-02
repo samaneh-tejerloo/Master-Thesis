@@ -11,7 +11,8 @@ ppi_data_loader = PPIDataLoadingUtil('datasets/tadw-sc/collins_2007/colins2007.c
 n = len(ppi_data_loader.proteins)
 A = np.zeros((n,n))
 edge_indices = np.array(ppi_data_loader.edges_index)
-mode = 'dad'
+# mode = 'non-weighted'
+mode = 'weighted'
 if mode == 'weighted':
     for edge, weight in zip(edge_indices, ppi_data_loader.weights):
         A[edge[0],edge[1]] = weight
@@ -97,11 +98,11 @@ print('Number of algorithm complexes:', len(algorithm_complexes))
 # evaluate.evalute(algorithm_complexes)
 get_score(algorithm_complexes, complexes)
 #%%
-plt.hist([len(complex) for complex in complexes])
+plt.hist([len(complex) for complex in complexes], bins=1000)
 # %%
 tsne = TSNE(n_components=2, perplexity=10)
 A_tsne = tsne.fit_transform(M)
-evaluate = Evaluation('datasets/sgd.txt', ppi_data_loader)
+evaluate = Evaluation('datasets/golden standard/ada_ppi.txt', ppi_data_loader)
 evaluate.filter_reference_complex(filtering_method='just_keep_dataset_proteins')
 complexes = evaluate.filtered_complexes
 # %%
