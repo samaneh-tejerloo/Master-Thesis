@@ -11,7 +11,7 @@ import numpy as np
 from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 # %%
-ppi_data_loader = PPIDataLoadingUtil('datasets/tadw-sc/collins_2007/colins2007.csv')
+ppi_data_loader = PPIDataLoadingUtil('datasets/AdaPPI/Krogan14k/krogan14k.csv',load_embeddings=False, ada_ppi_dataset=True)
 # %%
 features = ppi_data_loader.get_features(type='one_hot', name_spaces=['BP'])
 features = torch.tensor(features, dtype=torch.float32)
@@ -19,15 +19,15 @@ edge_index = torch.LongTensor(ppi_data_loader.edges_index).T
 #%%
 data = Data(x=features, edge_index=edge_index)
 # %%
-model = SimpleGCN(data.num_features, 512, 256)
-decoder = nocd.nn.BerpoDecoder(data.num_nodes, data.num_edges, balance_loss=False)
+model = SimpleGCN(data.num_features, 512, 512)
+decoder = nocd.nn.BerpoDecoder(data.num_nodes, data.num_edges, balance_loss=True)
 #%%
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
 
 A = torch.zeros(data.num_nodes, data.num_nodes, dtype=torch.int8)
 A[data.edge_index[0] , data.edge_index[1]] = 1
 #%%
-epochs = 1000
+epochs = 2000
 model.train()
 # progress_bar = tqdm(range(epochs))
 for epoch in range(epochs):
@@ -43,7 +43,8 @@ model.eval()
 with torch.no_grad():
     F_out = model(data)
 evaluator = Evaluation('datasets/golden standard/ada_ppi.txt', ppi_data_loader)
-evaluator.filter_reference_complex(filtering_method='all_proteins_in_dataset')
+# evaluator.filter_reference_complex(filtering_method='all_proteins_in_dataset')
+evaluator.filter_reference_complex(filtering_method='just_keep_dataset_proteins')
 
 for threshold in np.arange(0.1,1,0.1):
     threshold = np.round(threshold,1).item()
@@ -71,7 +72,6 @@ for threshold in np.arange(0.1,1,0.1):
     print(result)
     print('#'*100)
 # %%
-#%%
 torch.save(model.state_dict(), 'checkpoints/nocd_256_64_5k_epoch/model.pt')
 # %%
 tsne = TSNE(n_components=2)
@@ -79,7 +79,7 @@ nocd_tsne_embeddings = tsne.fit_transform(F_out)
 # %%
 plt.scatter(nocd_tsne_embeddings[:,0], nocd_tsne_embeddings[:,1], s=1)
 #%%
-threshold = 0.3
+threshold = 0.4
 clustering = (F_out > threshold).to(torch.int8)
 # print(clustering.sum(dim=0))
 
@@ -104,7 +104,7 @@ print('#'*100)
 # %%
 from sklearn.cluster import DBSCAN
 
-dbscan = DBSCAN(min_samples=2, eps=0.5, metric='cosine').fit(F_out)
+dbscan = DBSCAN(min_samples=2, eps=0.01, metric='cosine').fit(F_out)
 dbscan_clusters = dbscan.labels_
 
 dbscan_algorithm_complexes = []
@@ -126,4 +126,5 @@ result = evaluator.evalute(dbscan_algorithm_complexes)
 print(result)
 #%%
 evaluator.evalute(algorithm_complexes + dbscan_algorithm_complexes)
-# %%
+#%%
+evaluator.evalute(algorithm_complexes + algorithm_complexes)

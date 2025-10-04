@@ -17,9 +17,10 @@ import os
 from tqdm import tqdm
 
 class PPIDataLoadingUtil:
-    def __init__(self, csv_path, load_embeddings=True, load_weights=True):
+    def __init__(self, csv_path, load_embeddings=True, load_weights=True, ada_ppi_dataset=False):
         self.csv_path = csv_path
         self.df = pd.read_csv(csv_path, index_col=0)
+        self.ada_ppi_dataset = ada_ppi_dataset
 
         self.load_embeddings = load_embeddings
         if load_embeddings:
@@ -27,12 +28,22 @@ class PPIDataLoadingUtil:
             self.cc_embeddings = KeyedVectors.load_word2vec_format(CC_EMBEDDINGS_PATH)
             self.mf_embeddings = KeyedVectors.load_word2vec_format(MF_EMBEDDINGS_PATH)
         
-        ogaf = GafReader(SGD_GAF_PATH)
-        SEMANTIC_NAME_TO_SGD_ID_JSON = os.path.join(os.path.dirname(csv_path),'semantic_name_to_sgd_id.json')
-        with open(SEMANTIC_NAME_TO_SGD_ID_JSON) as f:
-            self.semantic_name_to_sgd_id = json.load(f)
+        if not ada_ppi_dataset:        
+            ogaf = GafReader(SGD_GAF_PATH)
+            SEMANTIC_NAME_TO_SGD_ID_JSON = os.path.join(os.path.dirname(csv_path),'semantic_name_to_sgd_id.json')
+            with open(SEMANTIC_NAME_TO_SGD_ID_JSON) as f:
+                self.semantic_name_to_sgd_id = json.load(f)
         
-        self.ns2assc = ogaf.get_ns2assc()
+            self.ns2assc = ogaf.get_ns2assc()
+        else:
+            with open(self.csv_path.replace('.csv','_go_information.txt'), 'r') as f:
+                go_terms_data = f.readlines()
+            
+            self.go_terms_data = {}
+            for line in go_terms_data:
+                parts = line.split()
+                self.go_terms_data[parts[0]] = parts[1:]
+        
         self.proteins = sorted(list(set(self.df['protein1'].tolist() + self.df['protein2'].tolist())))
 
         self.edges_index = []
@@ -51,44 +62,60 @@ class PPIDataLoadingUtil:
         return str(int(go_term.split(':')[-1]))
     
     def get_go_terms_and_embeddings(self, protein_semantic_name, load_embeddings=True, name_spaces=['MF','BP','CC']):
-        mf_list = []
-        mf_emb = []
-        if 'MF' in name_spaces:
-            try:
-                mf_list = list(self.ns2assc['MF'][self.semantic_name_to_sgd_id[protein_semantic_name]])
-                if load_embeddings:
-                    mf_emb = list(map(lambda x: self.mf_embeddings[self.go_term_to_id(x)], mf_list))
-            except:
-                mf_list = []
-                mf_emb = []
+        if self.ada_ppi_dataset:
+            go_embeddings = []
+            go_terms = self.go_terms_data.get(protein_semantic_name,[])
+            if load_embeddings:
+                for go_term in go_terms:
+                    go_id = self.go_term_to_id(go_term)
+                    if go_id in self.mf_embeddings:
+                        go_embeddings.append(self.mf_embeddings[go_id])
+                    elif go_id in self.cc_embeddings:
+                        go_embeddings.append(self.cc_embeddings[go_id])
+                    elif go_id in self.bp_embeddings:
+                        go_embeddings.append(self.bp_embeddings[go_id])
+                    else:
+                        print(f'Embeddings for {go_id} has not been found')
+            return go_terms, go_embeddings
+        else:
+            mf_list = []
+            mf_emb = []
+            if 'MF' in name_spaces:
+                try:
+                    mf_list = list(self.ns2assc['MF'][self.semantic_name_to_sgd_id[protein_semantic_name]])
+                    if load_embeddings:
+                        mf_emb = list(map(lambda x: self.mf_embeddings[self.go_term_to_id(x)], mf_list))
+                except:
+                    mf_list = []
+                    mf_emb = []
         
-        bp_list = []
-        bp_emb = []
-        if 'BP' in name_spaces:
-            try:
-                bp_list = list(self.ns2assc['BP'][self.semantic_name_to_sgd_id
-                [protein_semantic_name]])
-                if load_embeddings:
-                    bp_emb = list(map(lambda x: self.bp_embeddings[self.go_term_to_id(x)], bp_list))
-            except:
-                bp_list = []
-                bp_emb = []
-        cc_list = []
-        cc_emb = []
-        if 'CC' in name_spaces:
-            try:
-                cc_list = list(self.ns2assc['CC'][self.semantic_name_to_sgd_id[protein_semantic_name]])
-                if load_embeddings:
-                    cc_emb = list(map(lambda x: self.cc_embeddings[self.go_term_to_id(x)], cc_list))
-            except:
-                cc_list = []
-                cc_emb = []
+            bp_list = []
+            bp_emb = []
+            if 'BP' in name_spaces:
+                try:
+                    bp_list = list(self.ns2assc['BP'][self.semantic_name_to_sgd_id
+                    [protein_semantic_name]])
+                    if load_embeddings:
+                        bp_emb = list(map(lambda x: self.bp_embeddings[self.go_term_to_id(x)], bp_list))
+                except:
+                    bp_list = []
+                    bp_emb = []
+            cc_list = []
+            cc_emb = []
+            if 'CC' in name_spaces:
+                try:
+                    cc_list = list(self.ns2assc['CC'][self.semantic_name_to_sgd_id[protein_semantic_name]])
+                    if load_embeddings:
+                        cc_emb = list(map(lambda x: self.cc_embeddings[self.go_term_to_id(x)], cc_list))
+                except:
+                    cc_list = []
+                    cc_emb = []
                 
-        go_terms = mf_list + bp_list + cc_list
+            go_terms = mf_list + bp_list + cc_list
         
-        go_embeddings = mf_emb + bp_emb + cc_emb if load_embeddings else []
+            go_embeddings = mf_emb + bp_emb + cc_emb if load_embeddings else []
 
-        return go_terms, go_embeddings
+            return go_terms, go_embeddings
 
     def protein_name_to_id(self, protein_name):
         return self.proteins.index(protein_name)
