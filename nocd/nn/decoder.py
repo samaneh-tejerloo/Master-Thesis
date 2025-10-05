@@ -127,3 +127,50 @@ class BerpoDecoder(BernoulliDecoder):
         else:
             neg_scale = self.num_nonedges / self.num_edges
         return (loss_edges / self.num_edges + neg_scale * loss_nonedges / self.num_nonedges) / (1 + neg_scale)
+    
+    def loss_full_weighted(self, emb, adj):
+        """
+        Compute BerPo loss for all edges & non-edges in a WEIGHTED graph.
+        adj: (N, N) weighted adjacency (float tensor, 0 = no edge)
+        emb: (N, d) node embeddings
+        """
+        # (1) Get edge indices and weights
+        e1, e2 = adj.nonzero(as_tuple=True)
+        w = adj[e1, e2]  # edge weights
+
+        # (2) Edge dot-products (F_u · F_v)
+        edge_dots = torch.sum(emb[e1] * emb[e2], dim=1)
+
+        # (3) Weighted positive (edge) term
+        # log(1 - exp(-x)) = log(-expm1(-x)), numerically stable
+        loss_edges = -torch.sum(w * torch.log(-torch.expm1(-self.eps - edge_dots)))
+
+        # (4) Compute correction to exclude self-pairs and weighted edges
+        self_dots_sum = torch.sum(emb * emb)
+        correction = self_dots_sum + torch.sum(w * edge_dots)
+
+        # (5) Total sum over all pairs = sum_{u,v} F_u·F_v
+        sum_emb = torch.sum(emb, dim=0, keepdim=True).t()
+        total_dot_sum = torch.sum(emb @ sum_emb)
+
+        # (6) Weighted non-edge term
+        # = sum_{u,v} (1 - w_uv) * dot(Fu,Fv)
+        # approximated by total_dot_sum - sum_{edges} w_uv * dot(Fu,Fv) - self_dots_sum
+        loss_nonedges = total_dot_sum - correction
+
+        # (7) Balance scaling (same logic as original)
+        num_edges = torch.count_nonzero(adj)
+        num_nonedges = adj.numel() - num_edges
+        if self.balance_loss:
+            neg_scale = 1.0
+        else:
+            neg_scale = num_nonedges / num_edges
+
+        # (8) Final weighted BerPo loss
+        loss = (
+            (loss_edges / num_edges)
+            + neg_scale * (loss_nonedges / num_nonedges)
+        ) / (1 + neg_scale)
+
+        return loss
+
