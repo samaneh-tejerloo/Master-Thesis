@@ -3,16 +3,17 @@ from dataset import PPIDataLoadingUtil
 from models import SimpleGCN
 from torch_geometric.data import Data
 import torch
-import nocd
+from nocd_decoder import BerpoDecoder
 from tqdm import tqdm
 from evaluate import Evaluation
 from constants import SGD_GOLD_STANDARD_PATH
 import numpy as np
 from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
+from sklearn.cluster import DBSCAN
 # %%
 BALANCE = False
-Weighted = False
+Weighted = True
 DATASET_PATH = 'datasets/tadw-sc/krogan-core/krogan-core.csv'
 IS_ADA_PPI = False
 EPOCHS = 2000
@@ -20,7 +21,7 @@ LAM = 1
 # only affects the TADW_SC datasets
 NAME_SPACES = ['BP', 'MF']
 #%%
-ppi_data_loader = PPIDataLoadingUtil(DATASET_PATH,load_embeddings=False, ada_ppi_dataset=IS_ADA_PPI, load_weights=True)
+ppi_data_loader = PPIDataLoadingUtil(DATASET_PATH,load_embeddings=False, ada_ppi_dataset=IS_ADA_PPI, load_weights=Weighted)
 # %%
 features = ppi_data_loader.get_features(type='one_hot', name_spaces=NAME_SPACES)
 features = torch.tensor(features, dtype=torch.float32)
@@ -43,8 +44,8 @@ for i in range(A.shape[0]):
     A_2[i,i] = 0
 #%%
 # decoder = nocd.nn.BerpoDecoder(data.num_nodes, data.num_edges, balance_loss=BALANCE)
-decoder = nocd.nn.BerpoDecoder(data.num_nodes, A.sum().item(), balance_loss=BALANCE)
-decoder_2 = nocd.nn.BerpoDecoder(data.num_nodes, A_2.sum().item(), balance_loss=BALANCE)
+decoder = BerpoDecoder(data.num_nodes, A.sum().item(), balance_loss=BALANCE)
+decoder_2 = BerpoDecoder(data.num_nodes, A_2.sum().item(), balance_loss=BALANCE)
 #%%
 epochs = EPOCHS
 model.train()
@@ -53,11 +54,27 @@ for epoch in range(epochs):
     optimizer.zero_grad()
     F_out = model(data)
     if Weighted:
-        loss = decoder.loss_full_weighted(F_out, A)
+        if LAM == 0:
+            loss_1 = decoder.loss_full_weighted(F_out, A)
+            loss = loss_1
+        elif LAM == 1:
+            loss_2 = decoder_2.loss_full_weighted(F_out, A_2)
+            loss = loss_2
+        else:
+            loss_1 = decoder.loss_full_weighted(F_out, A)
+            loss_2 = decoder_2.loss_full_weighted(F_out, A_2)
+            loss = (1-LAM) * loss_1 + (LAM) * loss_2
     else:
-        loss_1 = decoder.loss_full(F_out, A.numpy())
-        loss_2 = decoder_2.loss_full(F_out, A_2.numpy())
-        loss = (1-LAM) * loss_1 + (LAM) * loss_2
+        if LAM == 0:
+            loss_1 = decoder.loss_full(F_out, A.numpy())
+            loss = loss_1
+        elif LAM == 1:
+            loss_2 = decoder_2.loss_full(F_out, A_2.numpy())
+            loss = loss_2
+        else:
+            loss_1 = decoder.loss_full(F_out, A.numpy())
+            loss_2 = decoder_2.loss_full(F_out, A_2.numpy())
+            loss = (1-LAM) * loss_1 + (LAM) * loss_2
     loss.backward()
     optimizer.step()
     # progress_bar.set_description(f'Epoch: {epoch+1:02}/{epochs}, loss:{loss.item():.4f}')
@@ -126,8 +143,6 @@ result = evaluator.evalute(algorithm_complexes)
 print(result)
 print('#'*100)
 # %%
-from sklearn.cluster import DBSCAN
-
 dbscan = DBSCAN(min_samples=7, eps=0.01, metric='cosine').fit(F_out)
 dbscan_clusters = dbscan.labels_
 
