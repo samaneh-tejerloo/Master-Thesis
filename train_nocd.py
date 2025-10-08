@@ -14,7 +14,7 @@ from sklearn.cluster import DBSCAN
 # %%
 BALANCE = False
 Weighted = True
-DATASET_PATH = 'datasets/tadw-sc/krogan-core/krogan-core.csv'
+DATASET_PATH = 'datasets/AdaPPI/DIP/dip.csv'
 IS_ADA_PPI = False
 EPOCHS = 2000
 LAM = 1
@@ -120,7 +120,7 @@ for threshold in np.arange(0.1,1,0.1):
 # # %%
 # plt.scatter(nocd_tsne_embeddings[:,0], nocd_tsne_embeddings[:,1], s=1)
 #%%
-threshold = 0.7
+threshold = 0.2
 clustering = (F_out > threshold).to(torch.int8)
 # print(clustering.sum(dim=0))
 
