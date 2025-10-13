@@ -1,6 +1,6 @@
 #%%
 from dataset import PPIDataLoadingUtil
-from models import SimpleGCN, SimpleGAT
+from models import SimpleGCN
 from torch_geometric.data import Data
 import torch
 from nocd_decoder import BerpoDecoder
@@ -19,17 +19,43 @@ IS_ADA_PPI = False
 EPOCHS = 2000
 LAM = 0
 # only affects the TADW_SC datasets
-NAME_SPACES = ['BP', 'MF']
+NAME_SPACES = ['BP']
 #%%
-ppi_data_loader = PPIDataLoadingUtil(DATASET_PATH,load_embeddings=False, ada_ppi_dataset=IS_ADA_PPI, load_weights=Weighted)
+ppi_data_loader = PPIDataLoadingUtil(DATASET_PATH,load_embeddings=True, ada_ppi_dataset=IS_ADA_PPI, load_weights=Weighted)
 # %%
-features = ppi_data_loader.get_features(type='one_hot', name_spaces=NAME_SPACES)
-features = torch.tensor(features, dtype=torch.float32)
+features = ppi_data_loader.get_features(type='embedding', name_spaces=NAME_SPACES)
 edge_index = torch.LongTensor(ppi_data_loader.edges_index).T
+edge_weights = torch.tensor(ppi_data_loader.weights)
+#%%
+_features = torch.zeros((len(features), 128), dtype=torch.float32)
+for idx, feature in enumerate(features):
+    if len(feature) > 0:
+        feature = torch.tensor(feature)
+        feature = feature.mean(dim=0)
+        _features[idx] = feature
+#%%
+for idx, feature in enumerate(features):
+    if len(feature) == 0:
+        indices = torch.where(edge_index[0,:]==idx)[0]
+        target_nodes = edge_index[:, indices][1,:]
+        target_weights = edge_weights[indices]
+        sum_embeddings = torch.zeros(1,128)
+        sum_weights = 0
+        for target_node, weight in zip(target_nodes.tolist(), target_weights.tolist()):
+            feature = _features[target_node]
+            if feature.sum() != 0:
+                sum_embeddings += weight * feature
+                sum_weights += weight
+        if sum_weights == 0:
+            _features[idx] = sum_embeddings
+        else:
+            _features[idx] = sum_embeddings / sum_weights
+#%%
+features = _features
 #%%
 data = Data(x=features, edge_index=edge_index)
 # %%
-model = SimpleGAT(embedding_dim=data.num_features, intermediate_dim=512, encoding_dim=256, heads=4, dropout=0)
+model = SimpleGCN(2048, 512, 256, proj=data.num_features)
 # model = BetterGCN(data.num_features, 512, 256)
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
 
@@ -47,6 +73,9 @@ for i in range(A.shape[0]):
 # decoder = nocd.nn.BerpoDecoder(data.num_nodes, data.num_edges, balance_loss=BALANCE)
 decoder = BerpoDecoder(data.num_nodes, A.sum().item(), balance_loss=BALANCE)
 decoder_2 = BerpoDecoder(data.num_nodes, A_2.sum().item(), balance_loss=BALANCE)
+#%%
+model.train()
+F_out = model(data)
 #%%
 epochs = EPOCHS
 model.train()
@@ -122,7 +151,7 @@ for threshold in np.arange(0.1,1,0.1):
 # # %%
 # plt.scatter(nocd_tsne_embeddings[:,0], nocd_tsne_embeddings[:,1], s=1)
 #%%
-threshold = 0.3
+threshold = 0.2
 clustering = (F_out > threshold).to(torch.int8)
 # print(clustering.sum(dim=0))
 

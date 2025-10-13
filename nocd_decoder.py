@@ -95,13 +95,23 @@ class BerpoDecoder(BernoulliDecoder):
         probs = 1 - torch.exp(-logits)
         return td.Bernoulli(probs=probs)
 
-    def loss_batch(self, emb, ones_idx, zeros_idx):
+    def loss_batch(self, emb, ones_idx, zeros_idx, pos_weights=None):
         """Compute BerPo loss for a batch of edges and non-edges."""
         # Loss for edges
         e1, e2 = ones_idx[:, 0], ones_idx[:, 1]
         edge_dots = torch.sum(emb[e1] * emb[e2], dim=1)
-        loss_edges = -torch.mean(torch.log(-torch.expm1(-self.eps - edge_dots)))
+        edge_dots = torch.clamp(edge_dots, min=0)  # safety clamp
 
+        # BP positive loss term: -log(1 - exp(-dot))
+        pos_loss = -torch.log(-torch.expm1(-self.eps - edge_dots))  # same as before
+
+        # Apply weights if provided
+        if pos_weights is not None:
+            # Normalize weights to have mean 1 (prevents scale explosion)
+            norm_w = pos_weights / (pos_weights.mean() + 1e-8)
+            pos_loss = pos_loss * norm_w
+
+        loss_edges = torch.mean(pos_loss)
         # Loss for non-edges
         ne1, ne2 = zeros_idx[:, 0], zeros_idx[:, 1]
         loss_nonedges = torch.mean(torch.sum(emb[ne1] * emb[ne2], dim=1))

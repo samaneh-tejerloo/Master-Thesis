@@ -1,1 +1,1 @@
-from models.simple_gcn import SimpleGCN
+from models.simple_gcn import SimpleGCN, SimpleGAT
