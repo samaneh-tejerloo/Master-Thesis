@@ -1,6 +1,6 @@
 #%%
 from dataset import PPIDataLoadingUtil
-from models import SimpleGCN, SimpleGAT
+from models import SimpleGCN, SimpleGAT, JKNetGATWith3Layers
 from torch_geometric.data import Data
 import torch
 from nocd_decoder import BerpoDecoder
@@ -29,8 +29,9 @@ edge_index = torch.LongTensor(ppi_data_loader.edges_index).T
 #%%
 data = Data(x=features, edge_index=edge_index)
 # %%
-model = SimpleGAT(embedding_dim=data.num_features, intermediate_dim=512, encoding_dim=256, heads=4, dropout=0)
+# model = SimpleGAT(embedding_dim=data.num_features, intermediate_dim=512, encoding_dim=256, heads=4, dropout=0)
 # model = BetterGCN(data.num_features, 512, 256)
+model = JKNetGATWith3Layers(embedding_dim=data.num_features, intermediate_dim=512,encoding_dim=512, heads=4, dropout=0)
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
 
 A = torch.zeros(data.num_nodes, data.num_nodes, dtype=torch.float32)
