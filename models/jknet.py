@@ -1,127 +1,87 @@
 #%%
 import torch
-from torch_geometric.nn import GCNConv, GATConv
+import torch_geometric.nn as gnn
 from torch.nn import functional as F
 import torch.nn as nn
+from models.base import BaseGNN
+from typing import List
 
-class JKNetGATWith3Layers(torch.nn.Module):
-    def __init__(self, embedding_dim=128, intermediate_dim=256, encoding_dim=128, heads=1, dropout=0):
-        super().__init__()
-        self.heads = heads
-        self.embedding_dim = embedding_dim
-        self.intermediate_dim = intermediate_dim
 
-        self.gatconv1 = GATConv(embedding_dim, intermediate_dim, heads=heads, concat=False, dropout=dropout)
-        self.gatconv2 = GATConv(intermediate_dim, intermediate_dim, heads=heads, concat=False, dropout=dropout)
-        self.gatconv3 = GATConv(intermediate_dim, encoding_dim, heads=heads, concat=False, dropout=dropout)
-        
+class JKNetMaxPooling(BaseGNN):
+    def __init__(self, embedding_dim=128, intermediate_dim=256, encoding_dim=128, n_layers=2, layer_module=gnn.GATConv, activation=F.relu, **kwargs):
+        super().__init__(embedding_dim, intermediate_dim, encoding_dim, n_layers, layer_module, activation, **kwargs)
+    
     def forward(self, data):
-        x, edge_index = data.x, data.edge_index
-        x1 = self.gatconv1(x, edge_index)
-        x1 = F.relu(x1)
-        
-        x2 = self.gatconv2(x1, edge_index)
-        x2 = F.relu(x2)
-        
-        x3 = self.gatconv3(x2, edge_index)
-        x3 = F.relu(x3)
-        
-        out = torch.vstack([x1.unsqueeze(0),x2.unsqueeze(0),x3.unsqueeze(0)])
-        out_pooled, _  = torch.max(out, dim=0)
+        outs: List[torch.Tensor] = super().forward(data)
+        outs = torch.vstack([out.unsqueeze(0) for out in outs])
+
+        out_pooled, _ = torch.max(outs, dim=0)
         return out_pooled
 
-class JKNetGATConcat(torch.nn.Module):
-    def __init__(self, embedding_dim=128, intermediate_dim=256, encoding_dim=128, heads=1, dropout=0):
-        super().__init__()
-        self.heads = heads
-        self.embedding_dim = embedding_dim
-        self.intermediate_dim = intermediate_dim
+class JKNetConcat(BaseGNN):
+    def __init__(self, embedding_dim=128, intermediate_dim=256, encoding_dim=128, n_layers=2, layer_module=gnn.GATConv, activation=F.relu, **kwargs):
 
-        self.gatconv1 = GATConv(embedding_dim, intermediate_dim, heads=heads, concat=False, dropout=dropout)
-        self.gatconv2 = GATConv(intermediate_dim, intermediate_dim, heads=heads, concat=False, dropout=dropout)
+        super().__init__(embedding_dim, intermediate_dim, encoding_dim, n_layers, layer_module, activation, **kwargs)
 
     def forward(self, data):
-        x, edge_index = data.x, data.edge_index
-        x1 = self.gatconv1(x, edge_index)
-        x1 = F.relu(x1)
-        
-        x2 = self.gatconv2(x1, edge_index)
-        x2 = F.relu(x2)
-        
-        
-        out = torch.cat([x1,x2], dim=-1)
+        outs:List[torch.Tensor] = super().forward(data)
+        out = torch.concat(outs, dim=-1)
         return out
 
-class LSTMAttentionJKNETGAT(torch.nn.Module):
-    def __init__(self, embedding_dim=128, intermediate_dim=256, encoding_dim=128, heads=1, dropout=0):
-        super().__init__()
-        self.heads = heads
-        self.embedding_dim = embedding_dim
-        self.intermediate_dim = intermediate_dim
+class JKNetLSTMAttention(BaseGNN):
+    def __init__(self, embedding_dim=128, intermediate_dim=256, encoding_dim=128, n_layers=2, layer_module=gnn.GATConv, activation=F.relu, **kwargs):
+        super().__init__(embedding_dim, intermediate_dim, encoding_dim, n_layers, layer_module, activation, **kwargs)
 
-        self.gatconv1 = GATConv(embedding_dim, intermediate_dim, heads=heads, concat=False, dropout=dropout)
-        self.gatconv2 = GATConv(intermediate_dim, intermediate_dim, heads=heads, concat=False, dropout=dropout)
+        bidirectional = kwargs.get('bidirectional',True)
 
-        self.lstm = nn.LSTM(input_size=intermediate_dim, hidden_size=intermediate_dim, batch_first=False, bidirectional=True)
+        self.lstm = nn.LSTM(input_size=encoding_dim, hidden_size=encoding_dim, batch_first=False, bidirectional=bidirectional)
 
-        self.attention_project = nn.Linear(2 * intermediate_dim, 1, bias=False)
-
-        
+        coef_dim = 2 if bidirectional else 1
+        self.attention_proj = nn.Linear(coef_dim * encoding_dim, 1, bias=False)
+    
     def forward(self, data):
-        x, edge_index = data.x, data.edge_index
-        x1 = self.gatconv1(x, edge_index)
-        x1 = F.relu(x1)
-        
-        x2 = self.gatconv2(x1, edge_index)
-        x2 = F.relu(x2)
-        
-        out = torch.vstack([x1.unsqueeze(0),x2.unsqueeze(0)])
-        
-        lstm_out, _ = self.lstm(out)
+        outs: List[torch.Tensor] = super().forward(data)
+        outs = torch.concat([out.unsqueeze(0) for out in outs], dim=0)
+        lstm_out, _ = self.lstm(outs)
+        A_hat = self.attention_proj(lstm_out).squeeze()
+        A = F.softmax(A_hat, dim=0).T
 
-        A = F.softmax(self.attention_project(lstm_out), dim=0).squeeze().T
-
-        out = torch.einsum('nk,knd->nd',A,out)
+        out = torch.einsum('nk,knd->nd', A, outs)
         return out
 
-class AttentionJKNETGAT(torch.nn.Module):
-    def __init__(self, embedding_dim=128, intermediate_dim=256, encoding_dim=128, heads=1, dropout=0, heads_transformer=4, transformer_layers=2):
-        super().__init__()
-        self.heads = heads
-        self.embedding_dim = embedding_dim
-        self.intermediate_dim = intermediate_dim
-        self.cls_token = nn.Parameter(torch.rand((1,intermediate_dim), requires_grad=True))
+class JKNetMultiHeadAttention(BaseGNN):
+    def __init__(self, embedding_dim=128, intermediate_dim=256, encoding_dim=128, n_layers=2, layer_module=gnn.GATConv, activation=F.relu, **kwargs):
 
-        self.gatconv1 = GATConv(embedding_dim, intermediate_dim, heads=heads, concat=False, dropout=dropout)
-        self.gatconv2 = GATConv(intermediate_dim, intermediate_dim, heads=heads, concat=False, dropout=dropout)
+        super().__init__(embedding_dim, intermediate_dim, encoding_dim, n_layers, 
+        layer_module, activation, **kwargs)
 
-        self.pos_embedding = nn.Embedding(3, intermediate_dim)
-        self.transformer_encoder_layer = nn.TransformerEncoderLayer(intermediate_dim, nhead=heads_transformer, dim_feedforward= 4 * intermediate_dim, batch_first=True)
+        self.cls_token = nn.Parameter(torch.rand(1,encoding_dim), requires_grad=True)
+
+        self.pos_embeddings = nn.Embedding(n_layers + 1, embedding_dim=encoding_dim)
+
+        transformer_heads = kwargs.get('transformer_heads', 4)
+
+        transformer_layers = kwargs.get('transformer_layers', 1)
+
+        mlp_ratio = kwargs.get('mlp_ratio', 4)
+
+        self.transformer_encoder_layer = nn.TransformerEncoderLayer(encoding_dim, nhead=transformer_heads, dim_feedforward=mlp_ratio * encoding_dim, batch_first=False)
+
         self.transformer_encoder = nn.TransformerEncoder(self.transformer_encoder_layer, num_layers=transformer_layers)
-
-        self.norm = nn.LayerNorm(intermediate_dim)
-
-
-        
+    
     def forward(self, data):
-        x, edge_index = data.x, data.edge_index
-        x1 = self.gatconv1(x, edge_index)
-        x1 = F.relu(x1)
+        outs: List[torch.Tensor] = super().forward(data)
         
-        x2 = self.gatconv2(x1, edge_index)
-        x2 = F.relu(x2)
-        
-        out = torch.concat([x1.unsqueeze(1),x2.unsqueeze(1)], dim=1)
-        cls_expanded = self.cls_token.unsqueeze(0).repeat(out.shape[0], 1, 1)
-        out =torch.concat([cls_expanded, out], dim=1)
-        out += self.pos_embedding(torch.arange(out.shape[1], device=out.device))
+        outs = torch.concat([out.unsqueeze(0) for out in outs], dim=0)
+        cls_expanded = self.cls_token.unsqueeze(1).expand(1,outs.shape[1], outs.shape[2])
+        outs = torch.concat([cls_expanded, outs], dim=0)
+        print(outs.shape)
+        outs += self.pos_embeddings(torch.arange(outs.shape[0], device=outs.device)).unsqueeze(1)
 
-        out = self.transformer_encoder(out)
-        out = self.norm(out)
-        out = out[:,0,:]
+        outs = self.transformer_encoder(outs)
+        return outs[0,:,:]
 
-        return out
-#%%
+
 if __name__ == '__main__':
     from dataset import PPIDataLoadingUtil
     data = PPIDataLoadingUtil('datasets/tadw-sc/krogan-core/krogan-core.csv', load_embeddings=False)
@@ -129,7 +89,7 @@ if __name__ == '__main__':
     edge_index = torch.LongTensor(data.edges_index).T
     from torch_geometric.data import Data
     data = Data(x=features, edge_index=edge_index)
-    net = LSTMAttentionJKNETGAT(embedding_dim=data.num_features, intermediate_dim=512, encoding_dim=512, heads=4)
+    net = JKNetMultiHeadAttention(embedding_dim=data.num_features, intermediate_dim=512, encoding_dim=512, heads=4, n_layers=3, layer_module=gnn.GATConv)
     out = net(data)
     print(out.shape)
 # %%

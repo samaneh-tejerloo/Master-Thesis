@@ -1,6 +1,6 @@
 #%%
 from dataset import PPIDataLoadingUtil
-from models import SimpleGCN
+from models import SimpleGCN, SimpleGAT, JKNetGATConcat
 from torch_geometric.data import Data
 import torch
 from nocd_decoder import BerpoDecoder
@@ -23,39 +23,48 @@ NAME_SPACES = ['BP']
 #%%
 ppi_data_loader = PPIDataLoadingUtil(DATASET_PATH,load_embeddings=True, ada_ppi_dataset=IS_ADA_PPI, load_weights=Weighted)
 # %%
-features = ppi_data_loader.get_features(type='embedding', name_spaces=NAME_SPACES)
+bp_features = ppi_data_loader.get_features(type='embedding', name_spaces=['BP'])
+mf_features = ppi_data_loader.get_features(type='embedding', name_spaces=['MF'])
+cc_features = ppi_data_loader.get_features(type='embedding', name_spaces=['CC'])
 edge_index = torch.LongTensor(ppi_data_loader.edges_index).T
 edge_weights = torch.tensor(ppi_data_loader.weights)
 #%%
-_features = torch.zeros((len(features), 128), dtype=torch.float32)
-for idx, feature in enumerate(features):
-    if len(feature) > 0:
-        feature = torch.tensor(feature)
-        feature = feature.mean(dim=0)
-        _features[idx] = feature
+def process_features(features):
+    _features = torch.zeros((len(features), 128), dtype=torch.float32)
+    for idx, feature in enumerate(features):
+        if len(feature) > 0:
+            feature = torch.tensor(feature)
+            feature = feature.mean(dim=0)
+            _features[idx] = feature
+
+    for idx, feature in enumerate(features):
+        if len(feature) == 0:
+            indices = torch.where(edge_index[0,:]==idx)[0]
+            target_nodes = edge_index[:, indices][1,:]
+            target_weights = edge_weights[indices]
+            sum_embeddings = torch.zeros(1,128)
+            sum_weights = 0
+            for target_node, weight in zip(target_nodes.tolist(), target_weights.tolist()):
+                feature = _features[target_node]
+                if feature.sum() != 0:
+                    sum_embeddings += weight * feature
+                    sum_weights += weight
+            if sum_weights == 0:
+                _features[idx] = sum_embeddings
+            else:
+                _features[idx] = sum_embeddings / sum_weights
+    return _features
 #%%
-for idx, feature in enumerate(features):
-    if len(feature) == 0:
-        indices = torch.where(edge_index[0,:]==idx)[0]
-        target_nodes = edge_index[:, indices][1,:]
-        target_weights = edge_weights[indices]
-        sum_embeddings = torch.zeros(1,128)
-        sum_weights = 0
-        for target_node, weight in zip(target_nodes.tolist(), target_weights.tolist()):
-            feature = _features[target_node]
-            if feature.sum() != 0:
-                sum_embeddings += weight * feature
-                sum_weights += weight
-        if sum_weights == 0:
-            _features[idx] = sum_embeddings
-        else:
-            _features[idx] = sum_embeddings / sum_weights
+bp_features = process_features(bp_features)
+mf_features = process_features(mf_features)
+cc_features = process_features(cc_features)
 #%%
-features = _features
+features = torch.cat([bp_features, mf_features, cc_features], dim=1)
 #%%
 data = Data(x=features, edge_index=edge_index)
 # %%
-model = SimpleGCN(2048, 512, 256, proj=data.num_features)
+# model = SimpleGCN(2048, 512, 256, proj=data.num_features)
+model = JKNetGATConcat(embedding_dim=data.num_features, intermediate_dim=512, encoding_dim=512, heads=4, dropout=0)
 # model = BetterGCN(data.num_features, 512, 256)
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
 
