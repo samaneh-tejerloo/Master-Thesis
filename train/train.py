@@ -24,7 +24,7 @@ heads = [2,4,8]
 feature_type = 'one_hot'
 name_spaces = [['BP'], ['BP','MF'], ['BP','MF','CC']]
 activation_function = ['relu','leaky_relu', 'gelu', 'elu']
-dataset = ['datasets/tadw-sc/krogan-core/krogan-core.csv', 'datasets/tadw-sc/collins_2007/colins2007.csv']
+datasets = ['datasets/tadw-sc/krogan-core/krogan-core.csv', 'datasets/tadw-sc/collins_2007/colins2007.csv', 'datasets/tadw-sc/biogrid/biogrid.csv', 'datasets/tadw-sc/DIP/DIP.csv','datasets/tadw-sc/krogan-extended/krogan-extended.csv']
 #%%
 def evaluate_model(model, evaluator, data, ppi_data_loader, do_print=False):
     # evaluating the model
@@ -91,7 +91,7 @@ def evaluate_model(model, evaluator, data, ppi_data_loader, do_print=False):
     best_result['best_threshold'] = best_threshold
     return best_result
 #%%
-def train_config(model, layers, layer_type, heads, feature_type, name_space, activation_function, dataset, intermediate_dim=512, epochs=2000):
+def train_config(model, layers, layer_type, heads, feature_type, name_space, activation_function, dataset, intermediate_dim=512, epochs=2000, test_mode=False):
 
     print('#'*10,'Config','#'*10)
     print(f'dataset:\t {dataset}')
@@ -105,7 +105,7 @@ def train_config(model, layers, layer_type, heads, feature_type, name_space, act
     print(f'intermediate_dim:\t {intermediate_dim}')
     print(f'epochs:\t {epochs}')
 
-    file_name = f'{model}_{layer_type}_{layers}layers_{heads}heads_{activation_function}_{'_'.join(name_space)}_{intermediate_dim}_{epochs}'
+    file_name = f'{os.path.basename(dataset).split(".")[0]}_{model}_{layer_type}_{layers}-layers_{heads}-heads_{activation_function}_{'_'.join(name_space)}_{intermediate_dim}_{epochs}'
 
     ppi_data_loader = PPIDataLoadingUtil(dataset, load_embeddings=False, load_weights=True, ada_ppi_dataset=False)
     edge_index = torch.LongTensor(ppi_data_loader.edges_index).T
@@ -199,6 +199,10 @@ def train_config(model, layers, layer_type, heads, feature_type, name_space, act
         'loss':[],
         'F1':[]
     }
+
+    best_f1 = -1
+    best_result_save = None
+
     # train
     model.train()
     for epoch in range(epochs):
@@ -211,45 +215,54 @@ def train_config(model, layers, layer_type, heads, feature_type, name_space, act
         loss= decoder.loss_full_weighted(F_out, A)
         loss.backward()
         optimizer.step()
-        best_result = evaluate_model(model, evaluator, data, ppi_data_loader, print=False)
+        best_result = evaluate_model(model, evaluator, data, ppi_data_loader, do_print=False)
         model.train()
         history['loss'].append(loss.item())
         history['F1'].append(best_result['F1'])
         print(f'Epoch: {epoch+1:02}/{epochs}, loss:{loss.item():.4f}, F1: {best_result['F1']:.4f}')
-    
-    best_result = evaluate_model(model, evaluator, data, ppi_data_loader, print=True)
-    with open(os.path.join(base_dir, 'results', f'{file_name}.json'), 'w') as f:
-        json.dump(best_result, f)
-    
-    torch.save(model.state_dict(), os.path.join(base_dir, 'weights', f'{file_name}.pt'))
 
-    return best_result, history
+        if best_result['F1'] > best_f1:
+            best_f1 = best_result['F1']
+            best_result_save = best_result
+            print(f'# Best F1 updated to {best_result_save["F1"]}')
+            torch.save(model.state_dict(), os.path.join(base_dir, 'weights', f'{file_name}.pt'))
+            if test_mode:
+                break
+        
+
+    with open(os.path.join(base_dir, 'results', f'{file_name}.json'), 'w') as f:
+        json.dump(best_result_save, f)
+    
+    plt.figure()
+    plt.plot(history['loss'], label='Loss')
+    plt.plot(history['F1'], label='F1')
+    plt.legend()
+    plt.savefig(os.path.join(base_dir, 'plots',f'{file_name}.jpg'))
+
+    return best_result_save, history
 #%%
 os.makedirs(base_dir, exist_ok=True)
 os.makedirs(os.path.join(base_dir, 'results'), exist_ok=True)
 os.makedirs(os.path.join(base_dir, 'weights'), exist_ok=True)
+os.makedirs(os.path.join(base_dir, 'plots'), exist_ok=True)
 #%%
-best_result, history= train_config('SimpleGNN', 2, 'GAT', 4, 'one_hot', ['BP','MF'], 'relu', dataset[0])
-print('#'*10, f'Train finished best results best_threshold={best_result["best_threshold"]}', '#'*10)
-print(best_result)
-plt.figure()
-plt.plot(history['loss'], label='Loss')
-plt.plot(history['F1'], label='F1')
-plt.legend()
-plt.show()
+for dataset in tqdm(datasets):
+    best_result, history= train_config('SimpleGNN', 2, 'GAT', 4, 'one_hot', ['BP','MF'], 'relu', dataset, test_mode=False)
+    print('#'*10, f'Train finished best results best_threshold={best_result["best_threshold"]}', '#'*10)
+    print(best_result)
 #%%
-best_threshold, best_result = train_config(models[0], layers[0], layer_types[1], heads[1], feature_type, name_spaces[1], activation_function[0], dataset, epochs=100)
-print('#'*10, f'Train finished best results best_threshold={best_threshold}', '#'*10)
-print(best_result)
-# %%
-for name_space in name_spaces:
-    for model in models:
-        for activation_fn in activation_function:
-            for layer in layers:
-                for layer_type in layer_types:
-                    if layer_type == 'GAT':
-                        for head in heads:
-                            best_threshold, best_result = train_config(model, layer, layer_type, head, feature_type, name_space, activation_fn, dataset, epochs=1)
-                    else:
-                        best_threshold, best_result = train_config(model, layer, layer_type, None, feature_type, name_space, activation_fn, dataset, epochs=1)
-# %%
+# best_threshold, best_result = train_config(models[0], layers[0], layer_types[1], heads[1], feature_type, name_spaces[1], activation_function[0], dataset, epochs=100)
+# print('#'*10, f'Train finished best results best_threshold={best_threshold}', '#'*10)
+# print(best_result)
+# # %%
+# for name_space in name_spaces:
+#     for model in models:
+#         for activation_fn in activation_function:
+#             for layer in layers:
+#                 for layer_type in layer_types:
+#                     if layer_type == 'GAT':
+#                         for head in heads:
+#                             best_threshold, best_result = train_config(model, layer, layer_type, head, feature_type, name_space, activation_fn, dataset, epochs=1)
+#                     else:
+#                         best_threshold, best_result = train_config(model, layer, layer_type, None, feature_type, name_space, activation_fn, dataset, epochs=1)
+# # %%
