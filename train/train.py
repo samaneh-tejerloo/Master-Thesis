@@ -14,6 +14,7 @@ import torch.nn.functional as F
 import json
 import os
 from train.utils import process_features
+import matplotlib.pyplot as plt
 base_dir = 'logs'
 #%%
 models=  ['SimpleGNN','JKNetConcat', 'JKNetMaxPooling', 'JKNetLSTMAttention-bidirectional','JKNetLSTMAttention-unidirectional']
@@ -25,7 +26,7 @@ name_spaces = [['BP'], ['BP','MF'], ['BP','MF','CC']]
 activation_function = ['relu','leaky_relu', 'gelu', 'elu']
 dataset = ['datasets/tadw-sc/krogan-core/krogan-core.csv', 'datasets/tadw-sc/collins_2007/colins2007.csv']
 #%%
-def evaluate_model(model, evaluator, data, ppi_data_loader, print=False):
+def evaluate_model(model, evaluator, data, ppi_data_loader, do_print=False):
     # evaluating the model
     model.eval()
     with torch.no_grad():
@@ -47,7 +48,7 @@ def evaluate_model(model, evaluator, data, ppi_data_loader, print=False):
             }
     for threshold in np.arange(0.1,1,0.1):
         threshold = np.round(threshold,1).item()
-        if print:
+        if do_print:
             print(f'threshold = {threshold}')
         clustering = (F_out > threshold).to(torch.int8)
 
@@ -61,11 +62,11 @@ def evaluate_model(model, evaluator, data, ppi_data_loader, print=False):
                     alg_complex.append(protein_name)
                 algorithm_complexes.append(alg_complex)
 
-        if print:
+        if do_print:
             print('Number of clusters', len(algorithm_complexes))
             print('Number of clusters with one protein', sum([len(c) <= 1 for c in algorithm_complexes]))
         algorithm_complexes = [c for c in algorithm_complexes if len(c) > 1]
-        if print:
+        if do_print:
             print('Number of algorithm complexes:', len(algorithm_complexes))
         try:
             result = evaluator.evalute(algorithm_complexes)
@@ -79,7 +80,7 @@ def evaluate_model(model, evaluator, data, ppi_data_loader, print=False):
                 'NCB': -1,
             }
 
-        if print:
+        if do_print:
             print(result)
             print('#'*100)
         if result['F1'] > max_f1:
@@ -228,9 +229,14 @@ os.makedirs(base_dir, exist_ok=True)
 os.makedirs(os.path.join(base_dir, 'results'), exist_ok=True)
 os.makedirs(os.path.join(base_dir, 'weights'), exist_ok=True)
 #%%
-best_result, history= train_config('SimpleGNN', 2, 'GAT', 4, 'one_hot', ['BP','MF'], 'relu', dataset[1])
+best_result, history= train_config('SimpleGNN', 2, 'GAT', 4, 'one_hot', ['BP','MF'], 'relu', dataset[0])
 print('#'*10, f'Train finished best results best_threshold={best_result["best_threshold"]}', '#'*10)
 print(best_result)
+plt.figure()
+plt.plot(history['loss'], label='Loss')
+plt.plot(history['F1'], label='F1')
+plt.legend()
+plt.show()
 #%%
 best_threshold, best_result = train_config(models[0], layers[0], layer_types[1], heads[1], feature_type, name_spaces[1], activation_function[0], dataset, epochs=100)
 print('#'*10, f'Train finished best results best_threshold={best_threshold}', '#'*10)
