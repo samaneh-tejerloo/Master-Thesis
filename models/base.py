@@ -43,9 +43,12 @@ class BaseGNN(torch.nn.Module):
     def forward(self, data):
         x, edge_index = data.x, data.edge_index
         outs = [x]
-        for layer in self.layers:
+        for idx, layer in enumerate(self.layers):
             out = layer(outs[-1], edge_index)
-            out = self.activation(out)
+            if idx == len(self.layers)-1:
+                out = F.relu(out)
+            else:
+                out = self.activation(out)
             outs.append(out)
         return outs[1:]
 

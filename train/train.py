@@ -23,7 +23,72 @@ heads = [2,4,8]
 feature_type = 'one_hot'
 name_spaces = [['BP'], ['BP','MF'], ['BP','MF','CC']]
 activation_function = ['relu','leaky_relu', 'gelu', 'elu']
-dataset = 'datasets/tadw-sc/krogan-core/krogan-core.csv'
+dataset = ['datasets/tadw-sc/krogan-core/krogan-core.csv', 'datasets/tadw-sc/collins_2007/colins2007.csv']
+#%%
+def evaluate_model(model, evaluator, data, ppi_data_loader, print=False):
+    # evaluating the model
+    model.eval()
+    with torch.no_grad():
+        if isinstance(model, gnn.GIN):
+            F_out = model(data.x, data.edge_index)
+            F_out = F.relu(F_out)
+        else:
+            F_out = model(data)
+
+    max_f1 = -1
+    best_threshold = -1
+    best_result = {
+                'Precision': -1,
+                'Recall': -1,
+                'Acc': -1,
+                'F1': -1,
+                'NCP':-1,
+                'NCB': -1,
+            }
+    for threshold in np.arange(0.1,1,0.1):
+        threshold = np.round(threshold,1).item()
+        if print:
+            print(f'threshold = {threshold}')
+        clustering = (F_out > threshold).to(torch.int8)
+
+        algorithm_complexes = []
+        for cluser_id in range(clustering.shape[1]):
+            indices = torch.where(clustering[:, cluser_id] ==1)[0]
+            if len(indices) > 0:
+                alg_complex = []
+                for protein_idx in indices.tolist():
+                    protein_name = ppi_data_loader.id_to_protein_name(protein_idx)
+                    alg_complex.append(protein_name)
+                algorithm_complexes.append(alg_complex)
+
+        if print:
+            print('Number of clusters', len(algorithm_complexes))
+            print('Number of clusters with one protein', sum([len(c) <= 1 for c in algorithm_complexes]))
+        algorithm_complexes = [c for c in algorithm_complexes if len(c) > 1]
+        if print:
+            print('Number of algorithm complexes:', len(algorithm_complexes))
+        try:
+            result = evaluator.evalute(algorithm_complexes)
+        except:
+            result = {
+                'Precision': -1,
+                'Recall': -1,
+                'Acc': -1,
+                'F1': -1,
+                'NCP':-1,
+                'NCB': -1,
+            }
+
+        if print:
+            print(result)
+            print('#'*100)
+        if result['F1'] > max_f1:
+            max_f1 = result['F1']
+            best_threshold = threshold
+            best_result = result
+
+    best_result['best_threshold'] = best_threshold
+    return best_result
 #%%
 def train_config(model, layers, layer_type, heads, feature_type, name_space, activation_function, dataset, intermediate_dim=512, epochs=2000):
 
@@ -125,7 +190,14 @@ def train_config(model, layers, layer_type, heads, feature_type, name_space, act
     # Berpo Decoder initialization
     decoder = BerpoDecoder(data.num_nodes, A.sum().item(), balance_loss=False)
 
+    # evaluator class
+    evaluator = Evaluation('datasets/golden standard/ada_ppi.txt', ppi_data_loader)
+    evaluator.filter_reference_complex(filtering_method='just_keep_dataset_proteins')
 
+    history = {
+        'loss':[],
+        'F1':[]
+    }
     # train
     model.train()
     for epoch in range(epochs):
@@ -138,81 +210,26 @@ def train_config(model, layers, layer_type, heads, feature_type, name_space, act
         loss= decoder.loss_full_weighted(F_out, A)
         loss.backward()
         optimizer.step()
-        print(f'Epoch: {epoch+1:02}/{epochs}, loss:{loss.item():.4f}')
+        best_result = evaluate_model(model, evaluator, data, ppi_data_loader, print=False)
+        model.train()
+        history['loss'].append(loss.item())
+        history['F1'].append(best_result['F1'])
+        print(f'Epoch: {epoch+1:02}/{epochs}, loss:{loss.item():.4f}, F1: {best_result['F1']:.4f}')
     
-    # evaluating the model
-    model.eval()
-    with torch.no_grad():
-        if isinstance(model, gnn.GIN):
-            F_out = model(data.x, data.edge_index)
-            F_out = F.relu(F_out)
-        else:
-            F_out = model(data)
-    evaluator = Evaluation('datasets/golden standard/ada_ppi.txt', ppi_data_loader)
-    evaluator.filter_reference_complex(filtering_method='just_keep_dataset_proteins')
-
-    max_f1 = -1
-    best_threshold = -1
-    best_result = {
-                'Precision': -1,
-                'Recall': -1,
-                'Acc': -1,
-                'F1': -1,
-                'NCP':-1,
-                'NCB': -1,
-            }
-    for threshold in np.arange(0.1,1,0.1):
-        threshold = np.round(threshold,1).item()
-        print(f'threshold = {threshold}')
-        clustering = (F_out > threshold).to(torch.int8)
-
-        algorithm_complexes = []
-        for cluser_id in range(clustering.shape[1]):
-            indices = torch.where(clustering[:, cluser_id] ==1)[0]
-            if len(indices) > 0:
-                alg_complex = []
-                for protein_idx in indices.tolist():
-                    protein_name = ppi_data_loader.id_to_protein_name(protein_idx)
-                    alg_complex.append(protein_name)
-                algorithm_complexes.append(alg_complex)
-
-        print('Number of clusters', len(algorithm_complexes))
-        print('Number of clusters with one protein', sum([len(c) <= 1 for c in algorithm_complexes]))
-        algorithm_complexes = [c for c in algorithm_complexes if len(c) > 1]
-        print('Number of algorithm complexes:', len(algorithm_complexes))
-        try:
-            result = evaluator.evalute(algorithm_complexes)
-        except:
-            result = {
-                'Precision': -1,
-                'Recall': -1,
-                'Acc': -1,
-                'F1': -1,
-                'NCP':-1,
-                'NCB': -1,
-            }
-
-        print(result)
-        print('#'*100)
-        if result['F1'] > max_f1:
-            max_f1 = result['F1']
-            best_threshold = threshold
-            best_result = result
-
-    best_result['best_threshold'] = best_threshold
+    best_result = evaluate_model(model, evaluator, data, ppi_data_loader, print=True)
     with open(os.path.join(base_dir, 'results', f'{file_name}.json'), 'w') as f:
         json.dump(best_result, f)
     
     torch.save(model.state_dict(), os.path.join(base_dir, 'weights', f'{file_name}.pt'))
 
-    return best_threshold, best_result
+    return best_result, history
 #%%
 os.makedirs(base_dir, exist_ok=True)
 os.makedirs(os.path.join(base_dir, 'results'), exist_ok=True)
 os.makedirs(os.path.join(base_dir, 'weights'), exist_ok=True)
 #%%
-best_threshold, best_result = train_config('SimpleGNN', 2, 'GAT2', 4, 'one_hot', ['BP','MF'], 'relu', dataset)
-print('#'*10, f'Train finished best results best_threshold={best_threshold}', '#'*10)
+best_result, history= train_config('SimpleGNN', 2, 'GAT', 4, 'one_hot', ['BP','MF'], 'relu', dataset[1])
+print('#'*10, f'Train finished best results best_threshold={best_result["best_threshold"]}', '#'*10)
 print(best_result)
 #%%
 best_threshold, best_result = train_config(models[0], layers[0], layer_types[1], heads[1], feature_type, name_spaces[1], activation_function[0], dataset, epochs=100)
