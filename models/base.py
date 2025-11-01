@@ -25,11 +25,12 @@ class BaseGNN(torch.nn.Module):
                 d1 = self.intermediate_dim
                 d2 = self.intermediate_dim
             
-            if layer_module == gnn.GATConv:
+            if layer_module == gnn.GATConv or layer_module== gnn.GATv2Conv:
                 heads = kwargs.get('heads', 4)
                 concat = kwargs.get('concat', False)
                 dropout = kwargs.get('dropout', 0)
-                layer = layer_module(d1, d2, heads=heads, concat=concat, dropout=dropout)
+                residual = kwargs.get('res', False)
+                layer = layer_module(d1, d2, heads=heads, concat=concat, dropout=dropout, residual=residual)
             elif layer_module == gnn.GCNConv:
                 layer = layer_module(d1, d2, add_self_loops=True)
             else:

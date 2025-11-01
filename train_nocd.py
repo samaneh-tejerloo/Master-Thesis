@@ -198,6 +198,3 @@ for complex in evaluator.filtered_complexes:
         plt.scatter(adj_tsne_embeddings[p_target_idx, 0], adj_tsne_embeddings[p_target_idx,1], s=40,marker='x', color='black')
         plt.scatter(adj_tsne_embeddings[complex_idx, 0], adj_tsne_embeddings[complex_idx,1], s=20,marker='x', color='red')
         plt.show()
-        
-#%%
-# %%

@@ -13,6 +13,7 @@ import torch_geometric.nn as gnn
 import torch.nn.functional as F
 import json
 import os
+from train.utils import process_features
 base_dir = 'logs'
 #%%
 models=  ['SimpleGNN','JKNetConcat', 'JKNetMaxPooling', 'JKNetLSTMAttention-bidirectional','JKNetLSTMAttention-unidirectional']
@@ -41,11 +42,21 @@ def train_config(model, layers, layer_type, heads, feature_type, name_space, act
     file_name = f'{model}_{layer_type}_{layers}layers_{heads}heads_{activation_function}_{'_'.join(name_space)}_{intermediate_dim}_{epochs}'
 
     ppi_data_loader = PPIDataLoadingUtil(dataset, load_embeddings=False, load_weights=True, ada_ppi_dataset=False)
+    edge_index = torch.LongTensor(ppi_data_loader.edges_index).T
 
-    features = ppi_data_loader.get_features(type=feature_type, name_spaces=name_space)
+    if feature_type == 'one_hot':
+        features = ppi_data_loader.get_features(type=feature_type, name_spaces=name_space)
+    elif feature_type == 'embedding':
+        features_list = []
+        for ns in name_space:
+            features = ppi_data_loader.get_features(type=feature_type, name_spaces=[ns])
+            features = process_features(features, edge_index)
+            features_list.append(features)
+        features = torch.concat(features_list, dim=-1)
+    
 
     features = torch.tensor(features, dtype=torch.float32)
-    edge_index = torch.LongTensor(ppi_data_loader.edges_index).T
+    print(features.shape)
     data = Data(x=features, edge_index=edge_index)
 
     embedding_dim = data.num_features
@@ -66,6 +77,9 @@ def train_config(model, layers, layer_type, heads, feature_type, name_space, act
             model = SimpleGNN(embedding_dim=embedding_dim, intermediate_dim=intermediate_dim, encoding_dim=intermediate_dim, n_layers=layers, layer_module=gnn.GCNConv, activation=activation_function)
         elif layer_type == 'GAT' and heads is not None:
             model = SimpleGNN(embedding_dim=embedding_dim, intermediate_dim=intermediate_dim, encoding_dim=intermediate_dim, n_layers=layers, layer_module=gnn.GATConv, activation=activation_function, heads=heads) 
+
+        elif layer_type == 'GAT2' and heads is not None:
+            model = SimpleGNN(embedding_dim=embedding_dim, intermediate_dim=intermediate_dim, encoding_dim=intermediate_dim, n_layers=layers, layer_module=gnn.GATv2Conv, activation=activation_function, heads=heads) 
         else:
             print('Wrong model type...')
             return
@@ -95,6 +109,8 @@ def train_config(model, layers, layer_type, heads, feature_type, name_space, act
         else:
             print('Wrong model type...')
             return
+    elif model == 'GIN':
+        model = gnn.GIN(in_channels=embedding_dim, hidden_channels=intermediate_dim, num_layers=layers, out_channels=intermediate_dim, jk=None, act=activation_function)
     else:
         print('Wrong model type...')
         return
@@ -114,7 +130,11 @@ def train_config(model, layers, layer_type, heads, feature_type, name_space, act
     model.train()
     for epoch in range(epochs):
         optimizer.zero_grad()
-        F_out = model(data)
+        if isinstance(model, gnn.GIN):
+            F_out = model(data.x, data.edge_index)
+            F_out = F.relu(F_out)
+        else:
+            F_out = model(data)
         loss= decoder.loss_full_weighted(F_out, A)
         loss.backward()
         optimizer.step()
@@ -123,7 +143,11 @@ def train_config(model, layers, layer_type, heads, feature_type, name_space, act
     # evaluating the model
     model.eval()
     with torch.no_grad():
-        F_out = model(data)
+        if isinstance(model, gnn.GIN):
+            F_out = model(data.x, data.edge_index)
+            F_out = F.relu(F_out)
+        else:
+            F_out = model(data)
     evaluator = Evaluation('datasets/golden standard/ada_ppi.txt', ppi_data_loader)
     evaluator.filter_reference_complex(filtering_method='just_keep_dataset_proteins')
 
@@ -187,6 +211,10 @@ os.makedirs(base_dir, exist_ok=True)
 os.makedirs(os.path.join(base_dir, 'results'), exist_ok=True)
 os.makedirs(os.path.join(base_dir, 'weights'), exist_ok=True)
 #%%
+best_threshold, best_result = train_config('SimpleGNN', 2, 'GAT2', 4, 'one_hot', ['BP','MF'], 'relu', dataset)
+print('#'*10, f'Train finished best results best_threshold={best_threshold}', '#'*10)
+print(best_result)
+#%%
 best_threshold, best_result = train_config(models[0], layers[0], layer_types[1], heads[1], feature_type, name_spaces[1], activation_function[0], dataset, epochs=100)
 print('#'*10, f'Train finished best results best_threshold={best_threshold}', '#'*10)
 print(best_result)
@@ -201,7 +229,4 @@ for name_space in name_spaces:
                             best_threshold, best_result = train_config(model, layer, layer_type, head, feature_type, name_space, activation_fn, dataset, epochs=1)
                     else:
                         best_threshold, best_result = train_config(model, layer, layer_type, None, feature_type, name_space, activation_fn, dataset, epochs=1)
-
-
-
 # %%
