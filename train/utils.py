@@ -29,3 +29,18 @@ def process_features(features, edge_index, edge_weights=None):
             else:
                 _features[idx] = sum_embeddings / sum_weights
     return _features
+
+
+def calculate_TOM(A):
+    # calculating the TOM
+    A_hat = torch.maximum(A, A.T)
+    A_hat = A_hat.fill_diagonal_(0)
+    K = A_hat.sum(dim=1)
+    L = A_hat @ A_hat
+    Kmin = torch.min(K[:, None], K[None, :])
+    numerator = L + A_hat
+    denominator = Kmin + 1.0 - A_hat
+    TOM = numerator / (denominator + 1e-12)
+    TOM = torch.maximum(TOM, TOM.T)
+    TOM = TOM.fill_diagonal_(0)
+    return TOM

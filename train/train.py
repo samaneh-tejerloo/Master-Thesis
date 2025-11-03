@@ -13,7 +13,7 @@ import torch_geometric.nn as gnn
 import torch.nn.functional as F
 import json
 import os
-from train.utils import process_features
+from train.utils import process_features, calculate_TOM
 import matplotlib.pyplot as plt
 base_dir = 'logs'
 #%%
@@ -187,6 +187,7 @@ def train_config(model, layers, layer_type, heads, feature_type, name_space, act
 
     A = torch.zeros(data.num_nodes, data.num_nodes, dtype=torch.float32)
     A[data.edge_index[0] , data.edge_index[1]] = torch.tensor(ppi_data_loader.weights, dtype=torch.float32)
+    # A[data.edge_index[0] , data.edge_index[1]] = 1
 
     # Berpo Decoder initialization
     decoder = BerpoDecoder(data.num_nodes, A.sum().item(), balance_loss=False)
@@ -245,6 +246,11 @@ os.makedirs(base_dir, exist_ok=True)
 os.makedirs(os.path.join(base_dir, 'results'), exist_ok=True)
 os.makedirs(os.path.join(base_dir, 'weights'), exist_ok=True)
 os.makedirs(os.path.join(base_dir, 'plots'), exist_ok=True)
+#%%
+best_result, history= train_config('SimpleGNN', 2, 'GAT', 4, 'one_hot', ['BP','MF'], 'relu', datasets[0], test_mode=False)
+
+print('#'*10, f'Train finished best results best_threshold={best_result["best_threshold"]}', '#'*10)
+print(best_result)
 #%%
 for dataset in tqdm(datasets):
     best_result, history= train_config('SimpleGNN', 2, 'GAT', 4, 'one_hot', ['BP','MF'], 'relu', dataset, test_mode=False)
