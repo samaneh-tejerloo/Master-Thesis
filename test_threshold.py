@@ -10,13 +10,13 @@ from models import SimpleGNN
 import torch
 
 # %%
-# dataset = "/home/shervin/Royam/Master-Thesis/datasets/tadw-sc/biogrid/biogrid.csv"
-# dataset = "/home/shervin/Royam/Master-Thesis/datasets/tadw-sc/collins_2007/colins2007.csv"
-dataset = "datasets/tadw-sc/krogan-core/krogan-core.csv"
-# dataset = "/home/shervin/Royam/Master-Thesis/datasets/tadw-sc/krogan-extended/krogan-extended.csv"
-# dataset = "/home/shervin/Royam/Master-Thesis/datasets/tadw-sc/DIP/DIP.csv"
+# dataset = "datasets/tadw-sc/biogrid/biogrid.csv"
+dataset = "datasets/tadw-sc/collins_2007/colins2007.csv"
+# dataset = "datasets/tadw-sc/krogan-core/krogan-core.csv"
+# dataset = "datasets/tadw-sc/krogan-extended/krogan-extended.csv"
+# dataset = "datasets/tadw-sc/DIP/DIP.csv"
 weights = (
-    "logs/weights/krogan-core_SimpleGNN_GAT_2-layers_4-heads_relu_BP_MF_512_2000.pt"
+    "logs/weights/colins2007_SimpleGNN_GAT_2-layers_4-heads_relu_BP_MF_512_2000.pt"
 )
 ppi_data_loader = PPIDataLoadingUtil(
     dataset, load_embeddings=False, load_weights=True, ada_ppi_dataset=False
@@ -70,6 +70,14 @@ def merge_unique(lists):
     return [sorted(list(g)) for g in uniq]
 
 
+# %%
+algorithm_complexes = get_algorithm_complexes(F_out, threshold=0.3)
+algorithm_complexes = merge_unique([algorithm_complexes])
+evaluator = Evaluation(SGD_GOLD_STANDARD_PATH, ppi_data_loader)
+evaluator.filter_reference_complex(filtering_method="just_keep_dataset_proteins")
+result = evaluator.evalute(algorithm_complexes)
+print(result)
+# %%
 # algorithm_complexes_1 = get_algorithm_complexes(F_out, threshold=0.1)
 algorithm_complexes_2 = get_algorithm_complexes(F_out, threshold=0.2)
 algorithm_complexes_3 = get_algorithm_complexes(F_out, threshold=0.3)

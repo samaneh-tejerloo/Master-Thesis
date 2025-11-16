@@ -1,5 +1,9 @@
-#%%
+# %%
+import torch_geometric.nn as gnn
+import torch.nn.functional as F
+from torch_geometric.utils import add_self_loops
 from dataset import PPIDataLoadingUtil
+import torch.nn as nn
 from models import SimpleGCN, SimpleGAT, JKNetGATConcat
 from torch_geometric.data import Data
 import torch
@@ -11,24 +15,30 @@ import numpy as np
 from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 from sklearn.cluster import DBSCAN
+
 # %%
 BALANCE = False
 Weighted = True
-DATASET_PATH = 'datasets/tadw-sc/krogan-core/krogan-core.csv'
+DATASET_PATH = "datasets/tadw-sc/krogan-core/krogan-core.csv"
 IS_ADA_PPI = False
 EPOCHS = 2000
 LAM = 0
 # only affects the TADW_SC datasets
-NAME_SPACES = ['BP']
-#%%
-ppi_data_loader = PPIDataLoadingUtil(DATASET_PATH,load_embeddings=True, ada_ppi_dataset=IS_ADA_PPI, load_weights=Weighted)
+NAME_SPACES = ["BP"]
 # %%
-bp_features = ppi_data_loader.get_features(type='embedding', name_spaces=['BP'])
-mf_features = ppi_data_loader.get_features(type='embedding', name_spaces=['MF'])
-cc_features = ppi_data_loader.get_features(type='embedding', name_spaces=['CC'])
+ppi_data_loader = PPIDataLoadingUtil(
+    DATASET_PATH,
+    load_embeddings=True,
+    ada_ppi_dataset=IS_ADA_PPI,
+    load_weights=Weighted,
+)
+# %%
+bp_features = ppi_data_loader.get_features(type="embedding", name_spaces=["BP"])
+mf_features = ppi_data_loader.get_features(type="embedding", name_spaces=["MF"])
+cc_features = ppi_data_loader.get_features(type="embedding", name_spaces=["CC"])
 edge_index = torch.LongTensor(ppi_data_loader.edges_index).T
 edge_weights = torch.tensor(ppi_data_loader.weights)
-#%%
+# %%
 def process_features(features):
     _features = torch.zeros((len(features), 128), dtype=torch.float32)
     for idx, feature in enumerate(features):
@@ -39,12 +49,14 @@ def process_features(features):
 
     for idx, feature in enumerate(features):
         if len(feature) == 0:
-            indices = torch.where(edge_index[0,:]==idx)[0]
-            target_nodes = edge_index[:, indices][1,:]
+            indices = torch.where(edge_index[0, :] == idx)[0]
+            target_nodes = edge_index[:, indices][1, :]
             target_weights = edge_weights[indices]
-            sum_embeddings = torch.zeros(1,128)
+            sum_embeddings = torch.zeros(1, 128)
             sum_weights = 0
-            for target_node, weight in zip(target_nodes.tolist(), target_weights.tolist()):
+            for target_node, weight in zip(
+                target_nodes.tolist(), target_weights.tolist()
+            ):
                 feature = _features[target_node]
                 if feature.sum() != 0:
                     sum_embeddings += weight * feature
@@ -54,38 +66,71 @@ def process_features(features):
             else:
                 _features[idx] = sum_embeddings / sum_weights
     return _features
-#%%
+
+
+# %%
 bp_features = process_features(bp_features)
 mf_features = process_features(mf_features)
 cc_features = process_features(cc_features)
-#%%
+# %%
 features = torch.cat([bp_features, mf_features, cc_features], dim=1)
-#%%
+# %%
 data = Data(x=features, edge_index=edge_index)
+
+
 # %%
 # model = SimpleGCN(2048, 512, 256, proj=data.num_features)
-model = JKNetGATConcat(embedding_dim=data.num_features, intermediate_dim=512, encoding_dim=512, heads=4, dropout=0)
+# model = JKNetGATConcat(
+#     embedding_dim=data.num_features,
+#     intermediate_dim=512,
+#     encoding_dim=512,
+#     heads=4,
+#     dropout=0,
+# )
+class LinearGAT(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.mlp = nn.Sequential(
+            nn.Linear(384, 512), nn.LeakyReLU(), nn.Linear(512, 512), nn.LeakyReLU()
+        )
+
+        self.l1 = gnn.SuperGATConv(in_channels=512, out_channels=512, heads=4, attention_type='SD', concat=False)
+        self.l2 = gnn.SuperGATConv(in_channels=512, out_channels=512, heads=4, attention_type='SD', concat=False)
+    def forward(self, data):
+        x, edge_index = data.x, data.edge_index
+
+        x = self.mlp(x)
+        x = self.l1(x, edge_index)
+        x = F.relu(x)
+        x = self.l2(x, edge_index)
+        x = F.relu(x)
+        return x
+
 # model = BetterGCN(data.num_features, 512, 256)
+model = LinearGAT()
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
+#%%
 
 A = torch.zeros(data.num_nodes, data.num_nodes, dtype=torch.float32)
 if Weighted:
-    A[data.edge_index[0] , data.edge_index[1]] = torch.tensor(ppi_data_loader.weights, dtype=torch.float32)
+    A[data.edge_index[0], data.edge_index[1]] = torch.tensor(
+        ppi_data_loader.weights, dtype=torch.float32
+    )
 else:
     A[data.edge_index[0], data.edge_index[1]] = 1
-
+#%%
 A_2 = A @ A
 A_2[A_2 > 0] = 1
 for i in range(A.shape[0]):
-    A_2[i,i] = 0
-#%%
+    A_2[i, i] = 0
+# %%
 # decoder = nocd.nn.BerpoDecoder(data.num_nodes, data.num_edges, balance_loss=BALANCE)
 decoder = BerpoDecoder(data.num_nodes, A.sum().item(), balance_loss=BALANCE)
 decoder_2 = BerpoDecoder(data.num_nodes, A_2.sum().item(), balance_loss=BALANCE)
-#%%
+# %%
 model.train()
 F_out = model(data)
-#%%
+# %%
 epochs = EPOCHS
 model.train()
 # progress_bar = tqdm(range(epochs))
@@ -102,7 +147,7 @@ for epoch in range(epochs):
         else:
             loss_1 = decoder.loss_full_weighted(F_out, A)
             loss_2 = decoder_2.loss_full_weighted(F_out, A_2)
-            loss = (1-LAM) * loss_1 + (LAM) * loss_2
+            loss = (1 - LAM) * loss_1 + (LAM) * loss_2
     else:
         if LAM == 0:
             loss_1 = decoder.loss_full(F_out, A.numpy())
@@ -113,30 +158,30 @@ for epoch in range(epochs):
         else:
             loss_1 = decoder.loss_full(F_out, A.numpy())
             loss_2 = decoder_2.loss_full(F_out, A_2.numpy())
-            loss = (1-LAM) * loss_1 + (LAM) * loss_2
+            loss = (1 - LAM) * loss_1 + (LAM) * loss_2
     loss.backward()
     optimizer.step()
     # progress_bar.set_description(f'Epoch: {epoch+1:02}/{epochs}, loss:{loss.item():.4f}')
-    print(f'Epoch: {epoch+1:02}/{epochs}, loss:{loss.item():.4f}')
-#%%
+    print(f"Epoch: {epoch + 1:02}/{epochs}, loss:{loss.item():.4f}")
+# %%
 model.eval()
 # model.load_state_dict(torch.load('checkpoints/nocd_krogan_core_tadw_512_256_weighted.pt'))
 with torch.no_grad():
     F_out = model(data)
-evaluator = Evaluation('datasets/golden standard/ada_ppi.txt', ppi_data_loader)
+evaluator = Evaluation("datasets/golden standard/ada_ppi.txt", ppi_data_loader)
 # evaluator.filter_reference_complex(filtering_method='all_proteins_in_dataset')
-evaluator.filter_reference_complex(filtering_method='just_keep_dataset_proteins')
+evaluator.filter_reference_complex(filtering_method="just_keep_dataset_proteins")
 
-for threshold in np.arange(0.1,1,0.1):
-    threshold = np.round(threshold,1).item()
-    print(f'threshold = {threshold}')
+for threshold in np.arange(0.1, 1, 0.1):
+    threshold = np.round(threshold, 1).item()
+    print(f"threshold = {threshold}")
     # threshold = 0.5
     clustering = (F_out > threshold).to(torch.int8)
     # print(clustering.sum(dim=0))
 
     algorithm_complexes = []
     for cluser_id in range(clustering.shape[1]):
-        indices = torch.where(clustering[:, cluser_id] ==1)[0]
+        indices = torch.where(clustering[:, cluser_id] == 1)[0]
         if len(indices) > 0:
             alg_complex = []
             for protein_idx in indices.tolist():
@@ -144,14 +189,17 @@ for threshold in np.arange(0.1,1,0.1):
                 alg_complex.append(protein_name)
             algorithm_complexes.append(alg_complex)
 
-    print('Number of clusters', len(algorithm_complexes))
-    print('Number of clusters with one protein', sum([len(c) <= 1 for c in algorithm_complexes]))
+    print("Number of clusters", len(algorithm_complexes))
+    print(
+        "Number of clusters with one protein",
+        sum([len(c) <= 1 for c in algorithm_complexes]),
+    )
     algorithm_complexes = [c for c in algorithm_complexes if len(c) > 1]
-    print('Number of algorithm complexes:', len(algorithm_complexes))
+    print("Number of algorithm complexes:", len(algorithm_complexes))
     # evaluator.filter_reference_complex(filtering_method='just_keep_dataset_proteins')
     result = evaluator.evalute(algorithm_complexes)
     print(result)
-    print('#'*100)
+    print("#" * 100)
 # %%
 # torch.save(model.state_dict(), 'checkpoints/nocd_256_64_5k_epoch/model.pt')
 # %%
@@ -159,14 +207,14 @@ for threshold in np.arange(0.1,1,0.1):
 # nocd_tsne_embeddings = tsne.fit_transform(F_out)
 # # %%
 # plt.scatter(nocd_tsne_embeddings[:,0], nocd_tsne_embeddings[:,1], s=1)
-#%%
+# %%
 threshold = 0.2
 clustering = (F_out > threshold).to(torch.int8)
 # print(clustering.sum(dim=0))
 
 algorithm_complexes = []
 for cluser_id in range(clustering.shape[1]):
-    indices = torch.where(clustering[:, cluser_id] ==1)[0]
+    indices = torch.where(clustering[:, cluser_id] == 1)[0]
     if len(indices) > 0:
         alg_complex = []
         for protein_idx in indices.tolist():
@@ -174,16 +222,19 @@ for cluser_id in range(clustering.shape[1]):
             alg_complex.append(protein_name)
         algorithm_complexes.append(alg_complex)
 
-print('Number of clusters', len(algorithm_complexes))
-print('Number of clusters with one protein', sum([len(c) <= 1 for c in algorithm_complexes]))
+print("Number of clusters", len(algorithm_complexes))
+print(
+    "Number of clusters with one protein",
+    sum([len(c) <= 1 for c in algorithm_complexes]),
+)
 algorithm_complexes = [c for c in algorithm_complexes if len(c) > 1]
-print('Number of algorithm complexes:', len(algorithm_complexes))
+print("Number of algorithm complexes:", len(algorithm_complexes))
 # evaluator.filter_reference_complex(filtering_method='just_keep_dataset_proteins')
 result = evaluator.evalute(algorithm_complexes)
 print(result)
-print('#'*100)
+print("#" * 100)
 # %%
-dbscan = DBSCAN(min_samples=7, eps=0.01, metric='cosine').fit(F_out)
+dbscan = DBSCAN(min_samples=7, eps=0.01, metric="cosine").fit(F_out)
 dbscan_clusters = dbscan.labels_
 
 dbscan_algorithm_complexes = []
@@ -196,45 +247,64 @@ for cluster_id in range(dbscan_clusters.max()):
             alg_complex.append(protein_name)
         dbscan_algorithm_complexes.append(alg_complex)
 
-print('Number of clusters', len(dbscan_algorithm_complexes))
-print('Number of clusters with one protein', sum([len(c) <= 1 for c in dbscan_algorithm_complexes]))
+print("Number of clusters", len(dbscan_algorithm_complexes))
+print(
+    "Number of clusters with one protein",
+    sum([len(c) <= 1 for c in dbscan_algorithm_complexes]),
+)
 dbscan_algorithm_complexes = [c for c in dbscan_algorithm_complexes if len(c) > 1]
-print('Number of algorithm complexes:', len(dbscan_algorithm_complexes))
+print("Number of algorithm complexes:", len(dbscan_algorithm_complexes))
 # evaluator.filter_reference_complex(filtering_method='just_keep_dataset_proteins')
 result = evaluator.evalute(dbscan_algorithm_complexes)
 print(result)
-#%%
+# %%
 evaluator.evalute(algorithm_complexes + dbscan_algorithm_complexes)
-#%%
+# %%
 evaluator.evalute(algorithm_complexes)
-#%%
+# %%
 algorithm_proteins = set([p for c in algorithm_complexes for p in c])
 # %%
 gold_standard_proteins = set([p for c in evaluator.filtered_complexes for p in c])
 # %%
-print(f'# proteins in algorithm:', len(algorithm_proteins))
-print(f'# proteins in gold standard:', len(gold_standard_proteins))
-print(f'# proteins in common:', len(algorithm_proteins.intersection(gold_standard_proteins)))
+print(f"# proteins in algorithm:", len(algorithm_proteins))
+print(f"# proteins in gold standard:", len(gold_standard_proteins))
+print(
+    f"# proteins in common:",
+    len(algorithm_proteins.intersection(gold_standard_proteins)),
+)
 # %%
 ppi_data_loader
-#%%
+# %%
 from sklearn.manifold import TSNE
+
 adj_tsne_embeddings = TSNE().fit_transform(A)
-#%%
+# %%
 p_target = algorithm_complexes[0]
 threshold = 0.25
 
 for complex in evaluator.filtered_complexes:
     intersection = set(complex).intersection(set(p_target))
-    na = len(intersection)**2 / (len(complex) * len(p_target))
+    na = len(intersection) ** 2 / (len(complex) * len(p_target))
     if na > threshold:
         p_target_idx = [ppi_data_loader.protein_name_to_id(p) for p in p_target]
         complex_idx = [ppi_data_loader.protein_name_to_id(p) for p in complex]
-        plt.figure(figsize=(10,10))
-        plt.scatter(adj_tsne_embeddings[:,0], adj_tsne_embeddings[:,1], s=5)
-        plt.scatter(adj_tsne_embeddings[p_target_idx, 0], adj_tsne_embeddings[p_target_idx,1], s=40,marker='x', color='black')
-        plt.scatter(adj_tsne_embeddings[complex_idx, 0], adj_tsne_embeddings[complex_idx,1], s=20,marker='x', color='red')
+        plt.figure(figsize=(10, 10))
+        plt.scatter(adj_tsne_embeddings[:, 0], adj_tsne_embeddings[:, 1], s=5)
+        plt.scatter(
+            adj_tsne_embeddings[p_target_idx, 0],
+            adj_tsne_embeddings[p_target_idx, 1],
+            s=40,
+            marker="x",
+            color="black",
+        )
+        plt.scatter(
+            adj_tsne_embeddings[complex_idx, 0],
+            adj_tsne_embeddings[complex_idx, 1],
+            s=20,
+            marker="x",
+            color="red",
+        )
         plt.show()
-        
-#%%
+
+# %%
 # %%
