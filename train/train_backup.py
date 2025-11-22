@@ -144,15 +144,8 @@ def train_config(
 
     file_name = f"{os.path.basename(dataset).split('.')[0]}_{model}_{layer_type}_{layers}-layers_{heads}-heads_{activation_function}_{'_'.join(name_space)}_{intermediate_dim}_{epochs}"
 
-    load_embeddings = False
-    if feature_type == "embedding":
-        load_embeddings = True
-
     ppi_data_loader = PPIDataLoadingUtil(
-        dataset,
-        load_embeddings=load_embeddings,
-        load_weights=True,
-        ada_ppi_dataset=False,
+        dataset, load_embeddings=False, load_weights=True, ada_ppi_dataset=False
     )
     edge_index = torch.LongTensor(ppi_data_loader.edges_index).T
 
@@ -333,11 +326,10 @@ def train_config(
     evaluator = Evaluation("datasets/golden standard/ada_ppi.txt", ppi_data_loader)
     evaluator.filter_reference_complex(filtering_method="just_keep_dataset_proteins")
 
-    history = {"loss": [], "F1": [], "diff": []}
+    history = {"loss": [], "F1": []}
 
     best_f1 = -1
     best_result_save = None
-    prev_f_out = None
 
     # train
     model.train()
@@ -357,43 +349,22 @@ def train_config(
         model.train()
         history["loss"].append(loss.item())
         history["F1"].append(best_result["F1"])
-        if prev_f_out is None:
-            prev_f_out = F_out
-            diff = -1
-        else:
-            diff = torch.abs(F_out - prev_f_out).sum()
-            prev_f_out = F_out
-
-        history["diff"].append(diff)
-
         print(
-            f"Epoch: {epoch + 1:02}/{epochs}, loss:{loss.item():.4f}, F1: {best_result['F1']:.4f}, diff: {diff:.4f}"
+            f"Epoch: {epoch + 1:02}/{epochs}, loss:{loss.item():.4f}, F1: {best_result['F1']:.4f}"
         )
 
         if best_result["F1"] > best_f1:
             best_f1 = best_result["F1"]
             best_result_save = best_result
-            best_result_save["diff"] = diff
-            best_result_save["loss"] = loss
-            best_result_save["epoch"] = epoch
             print(f"# Best F1 updated to {best_result_save['F1']}")
             torch.save(
-                model.state_dict(),
-                os.path.join(base_dir, "weights", f"{file_name}_best.pt"),
+                model.state_dict(), os.path.join(base_dir, "weights", f"{file_name}.pt")
             )
             if test_mode:
                 break
 
-        torch.save(
-            model.state_dict(),
-            os.path.join(base_dir, "weights", f"{file_name}_last.pt"),
-        )
-
-    with open(os.path.join(base_dir, "results", f"{file_name}_best.json"), "w") as f:
+    with open(os.path.join(base_dir, "results", f"{file_name}.json"), "w") as f:
         json.dump(best_result_save, f)
-
-    with open(os.path.join(base_dir, "history", f"{file_name}.json"), "w") as f:
-        json.dump(history, f)
 
     plt.figure()
     plt.plot(history["loss"], label="Loss")
@@ -409,7 +380,6 @@ os.makedirs(base_dir, exist_ok=True)
 os.makedirs(os.path.join(base_dir, "results"), exist_ok=True)
 os.makedirs(os.path.join(base_dir, "weights"), exist_ok=True)
 os.makedirs(os.path.join(base_dir, "plots"), exist_ok=True)
-os.makedirs(os.path.join(base_dir, "history"), exist_ok=True)
 # %%
 best_result, history = train_config(
     "SimpleGNN",
