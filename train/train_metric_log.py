@@ -38,7 +38,6 @@ def calculate_modularity(F_out, threshold, data):
     O_safe = O.copy()
     O_safe[O_safe == 0] = 1
     modularity = 1 / (2 * m) * ((1 / O_safe) * (A - K) * delta).sum()
-    print("here")
     return modularity
 
 
@@ -88,6 +87,7 @@ def evaluate_model(model, evaluator, data, ppi_data_loader, do_print=False):
 
     try:
         modularity = calculate_modularity(F_out, threshold, data)
+        result["modularity"] = float(modularity)
     except Exception as e:
         print(e)
 
@@ -200,6 +200,7 @@ def train_config(
     best_f1 = -1
     best_result_save = None
     prev_f_out = None
+    best_modularity = -1
 
     # train
     model.train()
@@ -227,17 +228,20 @@ def train_config(
             f"Epoch: {epoch + 1:02}/{epochs}, loss:{loss.item():.4f}, F1: {result['F1']:.4f}, diff: {diff:.4f}, modularity: {modularity:.4f}"
         )
 
-        if result["F1"] > best_f1:
-            best_f1 = result["F1"]
-            best_result_save = result
-            best_result_save["diff"] = diff
-            best_result_save["loss"] = loss
-            best_result_save["epoch"] = epoch
-            print(f"# Best F1 updated to {best_result_save['F1']}")
+        if result["modularity"] > best_modularity:
+            best_modularity = result["modularity"]
+            best_result_save = result.copy()
+
+            best_result_save["diff"] = float(diff)
+            best_result_save["loss"] = float(loss.item())
+            best_result_save["epoch"] = int(epoch)
+        
+            print(f"# Best modularity updated to {best_result_save['modularity']}")
             torch.save(
                 model.state_dict(),
                 os.path.join(base_dir, "weights", f"{file_name}_best.pt"),
             )
+
             if test_mode:
                 break
 
@@ -277,12 +281,7 @@ best_result, history = train_config(
     ["BP", "MF"],
     "relu",
     dataset,
-    test_mode=True,
+    test_mode=False,
 )
 
-print(
-    "#" * 10,
-    f"Train finished best results best_threshold={best_result['best_threshold']}",
-    "#" * 10,
-)
 print(best_result)
