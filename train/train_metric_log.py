@@ -123,7 +123,7 @@ def train_config(
     print(f"intermediate_dim:\t {intermediate_dim}")
     print(f"epochs:\t {epochs}")
 
-    file_name = f"{os.path.basename(dataset).split('.')[0]}_{model}_{layer_type}_{layers}-layers_{heads}-heads_{activation_function}_{'_'.join(name_space)}_{intermediate_dim}_{epochs}"
+    file_name = f"metric_{os.path.basename(dataset).split('.')[0]}_{model}_{layer_type}_{layers}-layers_{heads}-heads_{activation_function}_{'_'.join(name_space)}_{intermediate_dim}_{epochs}"
 
     load_embeddings = False
     if feature_type == "embedding":
@@ -195,7 +195,7 @@ def train_config(
     evaluator = Evaluation("datasets/golden standard/ada_ppi.txt", ppi_data_loader)
     evaluator.filter_reference_complex(filtering_method="just_keep_dataset_proteins")
 
-    history = {"loss": [], "F1": [], "diff": []}
+    history = {"loss": [], "F1": [], "diff": [], "modularity": []}
 
     best_f1 = -1
     best_result_save = None
@@ -223,6 +223,7 @@ def train_config(
 
         history["diff"].append(diff)
         modularity = result["modularity"]
+        history["modularity"].append(float(modularity))
 
         print(
             f"Epoch: {epoch + 1:02}/{epochs}, loss:{loss.item():.4f}, F1: {result['F1']:.4f}, diff: {diff:.4f}, modularity: {modularity:.4f}"
@@ -235,7 +236,7 @@ def train_config(
             best_result_save["diff"] = float(diff)
             best_result_save["loss"] = float(loss.item())
             best_result_save["epoch"] = int(epoch)
-        
+
             print(f"# Best modularity updated to {best_result_save['modularity']}")
             torch.save(
                 model.state_dict(),
@@ -259,6 +260,7 @@ def train_config(
     plt.figure()
     plt.plot(history["loss"], label="Loss")
     plt.plot(history["F1"], label="F1")
+    plt.plot(history["modularity"], label="modularity")
     plt.legend()
     plt.savefig(os.path.join(base_dir, "plots", f"{file_name}.jpg"))
 
