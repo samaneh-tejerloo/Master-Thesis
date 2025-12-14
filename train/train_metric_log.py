@@ -1,4 +1,5 @@
 # %%
+from sklearn.metrics.cluster import silhouette_score
 from dataset import PPIDataLoadingUtil
 from torch_geometric.data import Data
 from nocd_decoder import BerpoDecoder
@@ -21,13 +22,23 @@ base_dir = "logs"
 dataset = "datasets/tadw-sc/krogan-core/krogan-core.csv"
 
 
-def calculate_modularity(F_out, threshold, data):
+def convert_clusters_name_to_clusters_id(clusters, dataset):
+    clusters_id = []
+    for cluster in clusters:
+        cluster_id = []
+        for p in cluster:
+            cluster_id.append(dataset.protein_name_to_id(p))
+        clusters_id.append(cluster_id)
+    return clusters_id
+
+
+def calculate_modularity(F_out, threshold, data, ppi_data_loader):
     clustering = F_out > threshold
     clustering = clustering.int().numpy()
     n = data.x.shape[0]
     m = data.edge_index.shape[1] // 2
     A = np.zeros((n, n))
-    A[data.edge_index[0], data.edge_index[1]] = 1
+    A[data.edge_index[0], data.edge_index[1]] = np.array(ppi_data_loader.weights)
     degree_vector = A.sum(axis=0).reshape(-1, 1)
     K = (degree_vector @ degree_vector.T) / (2 * m)
 
@@ -38,11 +49,78 @@ def calculate_modularity(F_out, threshold, data):
     O_safe = O.copy()
     O_safe[O_safe == 0] = 1
     modularity = 1 / (2 * m) * ((1 / O_safe) * (A - K) * delta).sum()
-    return modularity
+    return float(modularity)
+
+
+def calculate_density(F_out, threshold, A):
+    M = F_out > threshold
+    M = M.int().numpy()
+    cluster_sizes = M.sum(axis=0)
+    if cluster_sizes.sum() == 0:
+        return 0
+
+    edges_per_cluster = np.diag(M.T @ A @ M) / 2
+    denominator = cluster_sizes * (cluster_sizes - 1) / 2
+
+    density_vector = edges_per_cluster / denominator
+    density_vector[denominator == 0] = 0
+
+    density_score = np.average(density_vector, weights=cluster_sizes)
+    return float(density_score)
+
+
+def calculate_homogenity(F_out, clusters_id):
+    homo_sum = 0
+    if len(clusters_id) == 0:
+        return float("inf")
+    for cluster in tqdm(clusters_id):
+        x = F_out[cluster, :]
+        mu_c = x.mean(0, keepdim=True)
+        homogeneity = np.linalg.norm(x - mu_c, axis=1).mean()
+        homo_sum += homogeneity
+    homo = homo_sum / len(clusters_id)
+    return float(homo)
+
+
+def calculate_silhouette(F_out, clusters_id, data):
+    n = data.x.shape[0]
+    all_si = []
+    if len(clusters_id) == 0:
+        return float("inf")
+
+    for i in tqdm(range(n)):
+        clusters_with_i = [cluster for cluster in clusters_id if i in cluster]
+        # print(i, clusters_with_i)
+        if len(clusters_with_i) == 0:
+            continue
+
+        clusters_without_i = [cluster for cluster in clusters_id if i not in cluster]
+
+        a_is = []
+        for cluster_with_i in clusters_with_i:
+            # print(cluster_with_i)
+            x = F_out[cluster_with_i, :]
+            a_i = np.linalg.norm(x - F_out[i, :], axis=1).mean()
+            a_is.append(a_i)
+        a_i = np.mean(a_is)
+        distances_inter = [float("inf")]
+        for cluster_without_i in clusters_without_i:
+            x = F_out[cluster_without_i, :]
+            distance_inter = np.linalg.norm(x - F_out[i, :], axis=1).mean()
+            distances_inter.append(distance_inter)
+        b_i = min(distances_inter)
+        s_i = (b_i - a_i) / max(a_i, b_i)
+
+        all_si.append(s_i)
+    return float(np.mean(all_si))
 
 
 def evaluate_model(model, evaluator, data, ppi_data_loader, do_print=False):
     # evaluating the model
+    n = data.x.shape[0]
+    A = np.zeros((n, n))
+    A[data.edge_index[0], data.edge_index[1]] = 1
+
     model.eval()
     with torch.no_grad():
         F_out = model(data)
@@ -78,6 +156,10 @@ def evaluate_model(model, evaluator, data, ppi_data_loader, do_print=False):
             sum([len(c) <= 1 for c in algorithm_complexes]),
         )
     algorithm_complexes = [c for c in algorithm_complexes if len(c) > 1]
+    clusters_id = convert_clusters_name_to_clusters_id(
+        algorithm_complexes, ppi_data_loader
+    )
+
     if do_print:
         print("Number of algorithm complexes:", len(algorithm_complexes))
     try:
@@ -86,10 +168,27 @@ def evaluate_model(model, evaluator, data, ppi_data_loader, do_print=False):
         pass
 
     try:
-        modularity = calculate_modularity(F_out, threshold, data)
+        modularity = calculate_modularity(F_out, threshold, data, ppi_data_loader)
         result["modularity"] = float(modularity)
     except Exception as e:
-        print(e)
+        print("modularity error:", e)
+    try:
+        density = calculate_density(F_out, threshold, A)
+        result["density"] = density
+    except Exception as e:
+        print("density error:", e)
+
+    try:
+        homo = calculate_homogenity(F_out, clusters_id)
+        result["homogenity"] = homo
+    except Exception as e:
+        print("homogenity error", e)
+
+    try:
+        silhouette = calculate_silhouette(F_out, clusters_id, data)
+        result["silhouette"] = silhouette
+    except Exception as e:
+        print("silhouette error", e)
 
     if do_print:
         print(result)
@@ -195,7 +294,15 @@ def train_config(
     evaluator = Evaluation("datasets/golden standard/ada_ppi.txt", ppi_data_loader)
     evaluator.filter_reference_complex(filtering_method="just_keep_dataset_proteins")
 
-    history = {"loss": [], "F1": [], "diff": [], "modularity": []}
+    history = {
+        "loss": [],
+        "F1": [],
+        "diff": [],
+        "modularity": [],
+        "homogenity": [],
+        "density": [],
+        "silhouette": [],
+    }
 
     best_f1 = -1
     best_result_save = None
@@ -218,24 +325,30 @@ def train_config(
             prev_f_out = F_out
             diff = -1
         else:
-            diff = torch.abs(F_out - prev_f_out).sum()
+            diff = torch.abs(F_out - prev_f_out).sum().item()
             prev_f_out = F_out
 
         history["diff"].append(diff)
         modularity = result["modularity"]
-        history["modularity"].append(float(modularity))
+        homogenity = result["homogenity"]
+        density = result["density"]
+        silhouette = result["silhouette"]
+        history["modularity"].append(modularity)
+        history["density"].append(density)
+        history["silhouette"].append(silhouette)
+        history["homogenity"].append(homogenity)
 
         print(
-            f"Epoch: {epoch + 1:02}/{epochs}, loss:{loss.item():.4f}, F1: {result['F1']:.4f}, diff: {diff:.4f}, modularity: {modularity:.4f}"
+            f"Epoch: {epoch + 1:02}/{epochs}, loss:{loss.item():.4f}, F1: {result['F1']:.4f}, diff: {diff:.4f}, modularity: {modularity:.4f}, density: {density:.4f}, homogenity: {homogenity:.4f}, silhouette: {silhouette:.4f}"
         )
 
         if result["modularity"] > best_modularity:
             best_modularity = result["modularity"]
             best_result_save = result.copy()
 
-            best_result_save["diff"] = float(diff)
-            best_result_save["loss"] = float(loss.item())
-            best_result_save["epoch"] = int(epoch)
+            best_result_save["diff"] = diff
+            best_result_save["loss"] = loss.item()
+            best_result_save["epoch"] = epoch
 
             print(f"# Best modularity updated to {best_result_save['modularity']}")
             torch.save(
@@ -274,6 +387,7 @@ os.makedirs(os.path.join(base_dir, "weights"), exist_ok=True)
 os.makedirs(os.path.join(base_dir, "plots"), exist_ok=True)
 os.makedirs(os.path.join(base_dir, "history"), exist_ok=True)
 # %%
+
 best_result, history = train_config(
     "SimpleGNN",
     2,
@@ -284,6 +398,5 @@ best_result, history = train_config(
     "relu",
     dataset,
     test_mode=False,
+    epochs=200,
 )
-
-print(best_result)
