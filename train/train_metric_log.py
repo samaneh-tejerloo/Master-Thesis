@@ -16,10 +16,11 @@ import json
 import os
 from train.utils import process_features
 import matplotlib.pyplot as plt
-
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+#%%
 base_dir = "logs"
 
-dataset = "datasets/tadw-sc/krogan-core/krogan-core.csv"
+dataset = "datasets/tadw-sc/biogrid/biogrid.csv"
 
 
 def convert_clusters_name_to_clusters_id(clusters, dataset):
@@ -34,19 +35,19 @@ def convert_clusters_name_to_clusters_id(clusters, dataset):
 
 def calculate_modularity(F_out, threshold, data, ppi_data_loader):
     clustering = F_out > threshold
-    clustering = clustering.int().numpy()
+    clustering = clustering.float()
     n = data.x.shape[0]
     m = data.edge_index.shape[1] // 2
-    A = np.zeros((n, n))
-    A[data.edge_index[0], data.edge_index[1]] = np.array(ppi_data_loader.weights)
+    A = torch.zeros(n, n).to(device)
+    A[data.edge_index[0], data.edge_index[1]] = torch.tensor(ppi_data_loader.weights).to(device)
     degree_vector = A.sum(axis=0).reshape(-1, 1)
     K = (degree_vector @ degree_vector.T) / (2 * m)
 
-    o_vector = clustering.sum(axis=1, keepdims=True)
+    o_vector = clustering.sum(dim=1, keepdim=True)
     O = o_vector @ o_vector.T
 
     delta = (clustering @ clustering.T) > 0
-    O_safe = O.copy()
+    O_safe = O.clone()
     O_safe[O_safe == 0] = 1
     modularity = 1 / (2 * m) * ((1 / O_safe) * (A - K) * delta).sum()
     return float(modularity)
@@ -54,18 +55,18 @@ def calculate_modularity(F_out, threshold, data, ppi_data_loader):
 
 def calculate_density(F_out, threshold, A):
     M = F_out > threshold
-    M = M.int().numpy()
-    cluster_sizes = M.sum(axis=0)
+    M = M.float()
+    cluster_sizes = M.sum(dim=0)
     if cluster_sizes.sum() == 0:
         return 0
 
-    edges_per_cluster = np.diag(M.T @ A @ M) / 2
+    edges_per_cluster = torch.diag(M.T @ A @ M) / 2
     denominator = cluster_sizes * (cluster_sizes - 1) / 2
 
     density_vector = edges_per_cluster / denominator
     density_vector[denominator == 0] = 0
-
-    density_score = np.average(density_vector, weights=cluster_sizes)
+    
+    density_score = (density_vector * cluster_sizes).sum() / cluster_sizes.sum()
     return float(density_score)
 
 
@@ -76,7 +77,7 @@ def calculate_homogenity(F_out, clusters_id):
     for cluster in tqdm(clusters_id):
         x = F_out[cluster, :]
         mu_c = x.mean(0, keepdim=True)
-        homogeneity = np.linalg.norm(x - mu_c, axis=1).mean()
+        homogeneity = torch.norm(x - mu_c, dim=1).mean()
         homo_sum += homogeneity
     homo = homo_sum / len(clusters_id)
     return float(homo)
@@ -100,13 +101,13 @@ def calculate_silhouette(F_out, clusters_id, data):
         for cluster_with_i in clusters_with_i:
             # print(cluster_with_i)
             x = F_out[cluster_with_i, :]
-            a_i = np.linalg.norm(x - F_out[i, :], axis=1).mean()
+            a_i = torch.norm(x - F_out[i, :], dim=1).mean().item()
             a_is.append(a_i)
         a_i = np.mean(a_is)
         distances_inter = [float("inf")]
         for cluster_without_i in clusters_without_i:
             x = F_out[cluster_without_i, :]
-            distance_inter = np.linalg.norm(x - F_out[i, :], axis=1).mean()
+            distance_inter = torch.norm(x - F_out[i, :], dim=1).mean().item()
             distances_inter.append(distance_inter)
         b_i = min(distances_inter)
         s_i = (b_i - a_i) / max(a_i, b_i)
@@ -118,7 +119,7 @@ def calculate_silhouette(F_out, clusters_id, data):
 def evaluate_model(model, evaluator, data, ppi_data_loader, do_print=False):
     # evaluating the model
     n = data.x.shape[0]
-    A = np.zeros((n, n))
+    A = torch.zeros(n, n).to(device)
     A[data.edge_index[0], data.edge_index[1]] = 1
 
     model.eval()
@@ -134,6 +135,7 @@ def evaluate_model(model, evaluator, data, ppi_data_loader, do_print=False):
         "NCB": -1,
         "modularity": -1,
     }
+    
     threshold = 0.3
     if do_print:
         print(f"threshold = {threshold}")
@@ -166,12 +168,14 @@ def evaluate_model(model, evaluator, data, ppi_data_loader, do_print=False):
         result = evaluator.evalute(algorithm_complexes)
     except:
         pass
-
+    
+    
     try:
         modularity = calculate_modularity(F_out, threshold, data, ppi_data_loader)
         result["modularity"] = float(modularity)
     except Exception as e:
         print("modularity error:", e)
+
     try:
         density = calculate_density(F_out, threshold, A)
         result["density"] = density
@@ -221,7 +225,7 @@ def train_config(
     print(f"activation_function:\t {activation_function}")
     print(f"intermediate_dim:\t {intermediate_dim}")
     print(f"epochs:\t {epochs}")
-
+    
     file_name = f"metric_{os.path.basename(dataset).split('.')[0]}_{model}_{layer_type}_{layers}-layers_{heads}-heads_{activation_function}_{'_'.join(name_space)}_{intermediate_dim}_{epochs}"
 
     load_embeddings = False
@@ -234,7 +238,7 @@ def train_config(
         load_weights=True,
         ada_ppi_dataset=False,
     )
-    edge_index = torch.LongTensor(ppi_data_loader.edges_index).T
+    edge_index = torch.LongTensor(ppi_data_loader.edges_index).T.to(device)
 
     if feature_type == "one_hot":
         features = ppi_data_loader.get_features(
@@ -248,7 +252,7 @@ def train_config(
             features_list.append(features)
         features = torch.concat(features_list, dim=-1)
 
-    features = torch.tensor(features, dtype=torch.float32)
+    features = torch.tensor(features, dtype=torch.float32).to(device)
     print(features.shape)
     data = Data(x=features, edge_index=edge_index)
 
@@ -277,14 +281,14 @@ def train_config(
                 activation=activation_function,
                 heads=heads,
             )
-
+    model.to(device)
     # optimizer
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
 
-    A = torch.zeros(data.num_nodes, data.num_nodes, dtype=torch.float32)
+    A = torch.zeros(data.num_nodes, data.num_nodes, dtype=torch.float32).to(device)
     A[data.edge_index[0], data.edge_index[1]] = torch.tensor(
         ppi_data_loader.weights, dtype=torch.float32
-    )
+    ).to(device)
     # A[data.edge_index[0] , data.edge_index[1]] = 1
 
     # Berpo Decoder initialization
@@ -398,5 +402,5 @@ best_result, history = train_config(
     "relu",
     dataset,
     test_mode=False,
-    epochs=200,
+    epochs=5000,
 )
