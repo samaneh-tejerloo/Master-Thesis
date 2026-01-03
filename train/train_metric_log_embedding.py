@@ -17,10 +17,11 @@ import os
 from train.utils import process_features
 import matplotlib.pyplot as plt
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
+device='cpu'
 #%%
 base_dir = "logs"
 
-dataset = "datasets/tadw-sc/biogrid/biogrid.csv"
+dataset = "datasets/tadw-sc/collins_2007/colins2007.csv"
 
 
 def convert_clusters_name_to_clusters_id(clusters, dataset):
@@ -225,6 +226,7 @@ def train_config(
     print(f"intermediate_dim:\t {intermediate_dim}")
     print(f"epochs:\t {epochs}")
     
+    
     file_name = f"metric_{os.path.basename(dataset).split('.')[0]}_{model}_{layer_type}_{layers}-layers_{heads}-heads_{activation_function}_{'_'.join(name_space)}_{intermediate_dim}_{epochs}_{feature_type}"
 
     load_embeddings = False
@@ -252,7 +254,7 @@ def train_config(
         features = torch.concat(features_list, dim=-1)
 
     features = torch.tensor(features, dtype=torch.float32).to(device)
-    print(features.shape)
+    print(f"features_shape: {features.shape}")
     data = Data(x=features, edge_index=edge_index)
 
     embedding_dim = data.num_features
@@ -397,9 +399,9 @@ best_result, history = train_config(
     "GAT",
     4,
     "embedding",
-    ["BP", "MF","CC"],
+    ["BP", "MF", "CC"],
     "relu",
     dataset,
     test_mode=False,
-    epochs=5000,
+    epochs=2000,
 )

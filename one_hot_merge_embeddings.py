@@ -6,7 +6,6 @@ from models import SimpleGNN
 from train.utils import process_features
 import torch_geometric.nn as gnn
 from torch_geometric.data import Data
-
 # %%
 path = "datasets/tadw-sc/krogan-core/krogan-core.csv"
 embedding_dataset = PPIDataLoadingUtil(path, load_embeddings=True, load_weights=True)
@@ -14,7 +13,7 @@ one_hot_dataset = PPIDataLoadingUtil(path, load_embeddings=False, load_weights=T
 # %%
 edge_index = torch.tensor(one_hot_dataset.edges_index).long().T
 one_hot_features = one_hot_dataset.get_features(
-    "one_hot", name_spaces=["BP", "MF", "CC"]
+    "one_hot", name_spaces=["BP", "MF"]
 )
 one_hot_features = torch.tensor(one_hot_features, dtype=torch.float32)
 
@@ -29,28 +28,24 @@ cc_features = process_features(cc_features, edge_index)
 embedding_features = torch.concat([bp_features, mf_features, cc_features], dim=-1)
 # %%
 model_one_hot = SimpleGNN(one_hot_features.shape[1], 512, 512, 2, gnn.GATConv)
-model_embeddings = SimpleGNN(embedding_features.shape[1], 512, 512, 2, gnn.SuperGATConv)
+model_embeddings = SimpleGNN(embedding_features.shape[1], 512, 512, 2, gnn.GATConv)
 # %%
-model_one_hot.load_state_dict(torch.load("logs/one_hot.pt"))
+model_one_hot.load_state_dict(torch.load("logs/weights/metric_krogan_core_SimpleGNN_GAT_2_layers_4_heads_relu_BP_MF_512.pt"))
 model_one_hot.eval()
 # %%
-
 model_embeddings.load_state_dict(
     torch.load(
-        "logs/krogan_core_SimpleGNN_SuperGAT_2_layers_4_heads_relu_BP_MF_CC_embedding.pt"
+        "logs/weights/metric_krogan-core_SimpleGNN_GAT_2-layers_4-heads_relu_BP_MF_CC_512_2000_embedding_best.pt"
     )
 )
 model_embeddings.eval()
 # %%
-
 data_one_hot = Data(one_hot_features, edge_index)
 data_embedding = Data(embedding_features, edge_index)
 with torch.no_grad():
     F_one_hot = model_one_hot(data_one_hot)
     F_embedding = model_embeddings(data_embedding)
 # %%
-
-
 def get_algorithm_complexes(F_out, threshold=0.3):
     clustering = (F_out > threshold).to(torch.int8)
 
@@ -81,9 +76,39 @@ def merge_unique(lists):
 
 
 # %%
+algorithm_complexes_2 = get_algorithm_complexes(F_one_hot, threshold=0.2)
+algorithm_complexes_3 = get_algorithm_complexes(F_one_hot, threshold=0.3)
+algorithm_complexes_4 = get_algorithm_complexes(F_one_hot, threshold=0.4)
+algorithm_complexes_5 = get_algorithm_complexes(F_one_hot, threshold=0.5)
+algorithm_complexes_6 = get_algorithm_complexes(F_one_hot, threshold=0.6)
+algorithm_complexes_7 = get_algorithm_complexes(F_one_hot, threshold=0.7)
 
-one_hot_complexes = get_algorithm_complexes(F_one_hot, threshold=0.2)
-embeddings_complexes = get_algorithm_complexes(F_embedding, threshold=0.3)
+all_complexes = [
+    algorithm_complexes_2,
+    algorithm_complexes_3,
+    algorithm_complexes_4,
+    algorithm_complexes_5,
+    algorithm_complexes_6,
+    algorithm_complexes_7,
+]
+one_hot_complexes = merge_unique(all_complexes)
+
+algorithm_complexes_2 = get_algorithm_complexes(F_embedding, threshold=0.2)
+algorithm_complexes_3 = get_algorithm_complexes(F_embedding, threshold=0.3)
+algorithm_complexes_4 = get_algorithm_complexes(F_embedding, threshold=0.4)
+algorithm_complexes_5 = get_algorithm_complexes(F_embedding, threshold=0.5)
+algorithm_complexes_6 = get_algorithm_complexes(F_embedding, threshold=0.6)
+algorithm_complexes_7 = get_algorithm_complexes(F_embedding, threshold=0.7)
+
+all_complexes = [
+    algorithm_complexes_2,
+    algorithm_complexes_3,
+    algorithm_complexes_4,
+    algorithm_complexes_5,
+    algorithm_complexes_6,
+    algorithm_complexes_7,
+]
+embeddings_complexes = merge_unique(all_complexes)
 # %%
 evaluator = Evaluation(ppi_data_loader=one_hot_dataset)
 evaluator.filter_reference_complex(filtering_method="just_keep_dataset_proteins")
@@ -91,11 +116,19 @@ evaluator.filter_reference_complex(filtering_method="just_keep_dataset_proteins"
 one_hot_complexes = merge_unique([one_hot_complexes])
 embeddings_complexes = merge_unique([embeddings_complexes])
 all_complexes = merge_unique([one_hot_complexes, embeddings_complexes])
+all_complexes = [c for c in all_complexes if len(c) > 2]
 # %%
-len(one_hot_complexes)
-len(embeddings_complexes)
-len(all_complexes)
+print(len(one_hot_complexes))
+print(len(embeddings_complexes))
+print(len(all_complexes))
 # %%
 evaluator.evalute(one_hot_complexes)
+#%%
 evaluator.evalute(embeddings_complexes)
+#%%
 evaluator.evalute(all_complexes)
+#%%
+algorithm_complexes_3 = get_algorithm_complexes(F_one_hot, threshold=0.3)
+algorithm_complexes_3 = merge_unique([algorithm_complexes_3])
+algorithm_complexes_3 = [c for c in algorithm_complexes_3 if len(c) > 2]
+evaluator.evalute(algorithm_complexes_3)
