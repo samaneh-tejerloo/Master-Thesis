@@ -17,14 +17,16 @@ evaluator = Evaluation(ppi_data_loader=dataset)
 evaluator.filter_reference_complex(filtering_method="just_keep_dataset_proteins")
 reference_complexes = evaluator.filtered_complexes
 #%%
-with open('logs/algorithm_complexes/collins2007.txt') as f:
+path = 'logs/algorithm_complexes/collins2007.txt'
+dataset_name = path.split('/')[-1].split('.')[0]
+with open(path) as f:
     lines = f.read().split('\n')
-#%%
+
 algorithm_complexes = [line.split() for line in lines]
-#%%
+
 len_algorithm = np.array([len(c) for c in algorithm_complexes])
 len_reference = np.array([len(c) for c in reference_complexes])
-#%%
+
 data = [len_reference, len_algorithm]
 
 plt.figure(figsize=(4, 6))
@@ -37,5 +39,6 @@ sns.violinplot(
 
 plt.xticks([0, 1], ["Reference", "Algorithm"])
 plt.ylabel("Length Complexes")
+plt.title(dataset_name)
 plt.tight_layout()
 plt.show()

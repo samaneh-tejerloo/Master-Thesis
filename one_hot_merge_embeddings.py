@@ -151,6 +151,6 @@ for c in all_complexes:
             text+= f" {p}"
     text+="\n"
 print(text)   
-#%%
+
 with open(os.path.join('logs','algorithm_complexes','collins2007.txt'), 'w') as f:
     f.write(text)
