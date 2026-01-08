@@ -16,12 +16,11 @@ import json
 import os
 from train.utils import process_features
 import matplotlib.pyplot as plt
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
-#device='cpu'
+device = 'cpu'
 #%%
 base_dir = "logs"
 
-dataset = "datasets/tadw-sc/DIP/DIP.csv"
+dataset = "datasets/tadw-sc/krogan-core/krogan-core.csv"
 
 
 def convert_clusters_name_to_clusters_id(clusters, dataset):
@@ -398,10 +397,10 @@ best_result, history = train_config(
     2,
     "GAT",
     4,
-    "one_hot",
-    ["BP", "MF"],
+    "embedding",
+    ["BP", "MF","CC"],
     "relu",
     dataset,
     test_mode=False,
-    epochs=5000,
+    epochs=2000,
 )

@@ -6,8 +6,9 @@ from models import SimpleGNN
 from train.utils import process_features
 import torch_geometric.nn as gnn
 from torch_geometric.data import Data
+import numpy as np
 # %%
-path = "datasets/tadw-sc/krogan-core/krogan-core.csv"
+path = "datasets/tadw-sc/collins_2007/colins2007.csv"
 embedding_dataset = PPIDataLoadingUtil(path, load_embeddings=True, load_weights=True)
 one_hot_dataset = PPIDataLoadingUtil(path, load_embeddings=False, load_weights=True)
 # %%
@@ -30,12 +31,12 @@ embedding_features = torch.concat([bp_features, mf_features, cc_features], dim=-
 model_one_hot = SimpleGNN(one_hot_features.shape[1], 512, 512, 2, gnn.GATConv)
 model_embeddings = SimpleGNN(embedding_features.shape[1], 512, 512, 2, gnn.GATConv)
 # %%
-model_one_hot.load_state_dict(torch.load("logs/weights/metric_krogan_core_SimpleGNN_GAT_2_layers_4_heads_relu_BP_MF_512.pt"))
+model_one_hot.load_state_dict(torch.load("logs/weights/metric_colins2007_SimpleGNN_GAT_2-layers_4-heads_relu_BP_MF_512_2000_one_hot_best.pt"))
 model_one_hot.eval()
 # %%
 model_embeddings.load_state_dict(
     torch.load(
-        "logs/weights/metric_krogan-core_SimpleGNN_GAT_2-layers_4-heads_relu_BP_MF_CC_512_2000_embedding_best.pt"
+        "logs/weights/metric_colins2007_SimpleGNN_GAT_2-layers_4-heads_relu_BP_MF_CC_512_2000_embedding_best.pt"
     )
 )
 model_embeddings.eval()
@@ -74,7 +75,6 @@ def merge_unique(lists):
     uniq = set(frozenset(group) for group in all_groups)
     return [sorted(list(g)) for g in uniq]
 
-
 # %%
 algorithm_complexes_2 = get_algorithm_complexes(F_one_hot, threshold=0.2)
 algorithm_complexes_3 = get_algorithm_complexes(F_one_hot, threshold=0.3)
@@ -92,7 +92,7 @@ all_complexes = [
     algorithm_complexes_7,
 ]
 one_hot_complexes = merge_unique(all_complexes)
-
+#%%
 algorithm_complexes_2 = get_algorithm_complexes(F_embedding, threshold=0.2)
 algorithm_complexes_3 = get_algorithm_complexes(F_embedding, threshold=0.3)
 algorithm_complexes_4 = get_algorithm_complexes(F_embedding, threshold=0.4)
@@ -121,14 +121,36 @@ all_complexes = [c for c in all_complexes if len(c) > 2]
 print(len(one_hot_complexes))
 print(len(embeddings_complexes))
 print(len(all_complexes))
+def print_results(result):
+    for key, value in result.items():
+        print(key, ":", np.round(value, 3))
 # %%
-evaluator.evalute(one_hot_complexes)
+one_hot_complexes = [c for c in one_hot_complexes if len(c) > 2]
+result = evaluator.evalute(one_hot_complexes)
+print_results(result)
 #%%
-evaluator.evalute(embeddings_complexes)
+embeddings_complexes = [c for c in embeddings_complexes if len(c) > 2]
+result = evaluator.evalute(embeddings_complexes)
+print_results(result)
 #%%
-evaluator.evalute(all_complexes)
+result = evaluator.evalute(all_complexes)
+print_results(result)
 #%%
-algorithm_complexes_3 = get_algorithm_complexes(F_one_hot, threshold=0.3)
+algorithm_complexes_3 = get_algorithm_complexes(F_embedding, threshold=0.3)
 algorithm_complexes_3 = merge_unique([algorithm_complexes_3])
 algorithm_complexes_3 = [c for c in algorithm_complexes_3 if len(c) > 2]
-evaluator.evalute(algorithm_complexes_3)
+result = evaluator.evalute(algorithm_complexes_3)
+print_results(result)
+#%%
+text = ""
+for c in all_complexes:
+    for i,p in enumerate(c):
+        if i == 0:
+            text+= p
+        else:
+            text+= f" {p}"
+    text+="\n"
+print(text)   
+#%%
+with open(os.path.join('logs','algorithm_complexes','collins2007.txt'), 'w') as f:
+    f.write(text)

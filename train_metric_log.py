@@ -1,5 +1,7 @@
 # %%
 from sklearn.metrics.cluster import silhouette_score
+import sys
+sys.path.append('/home/user/Master-Thesis')
 from dataset import PPIDataLoadingUtil
 from torch_geometric.data import Data
 from nocd_decoder import BerpoDecoder
@@ -17,11 +19,11 @@ import os
 from train.utils import process_features
 import matplotlib.pyplot as plt
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-#device='cpu'
+device = 'cpu'
 #%%
 base_dir = "logs"
 
-dataset = "datasets/tadw-sc/DIP/DIP.csv"
+dataset = "datasets/tadw-sc/collins/colins.csv"
 
 
 def convert_clusters_name_to_clusters_id(clusters, dataset):
@@ -52,6 +54,7 @@ def calculate_modularity(F_out, threshold, data, ppi_data_loader):
     O_safe[O_safe == 0] = 1
     modularity = 1 / (2 * m) * ((1 / O_safe) * (A - K) * delta).sum()
     return float(modularity)
+
 
 def calculate_density(F_out, threshold, A):
     M = F_out > threshold
@@ -182,17 +185,17 @@ def evaluate_model(model, evaluator, data, ppi_data_loader, do_print=False):
     except Exception as e:
         print("density error:", e)
 
-    try:
-        homo = calculate_homogenity(F_out, clusters_id)
-        result["homogenity"] = homo
-    except Exception as e:
-        print("homogenity error", e)
+    # try:
+    #     homo = calculate_homogenity(F_out, clusters_id)
+    #     result["homogenity"] = homo
+    # except Exception as e:
+    #     print("homogenity error", e)
 
-    try:
-        silhouette = calculate_silhouette(F_out, clusters_id, data)
-        result["silhouette"] = silhouette
-    except Exception as e:
-        print("silhouette error", e)
+    # try:
+    #     silhouette = calculate_silhouette(F_out, clusters_id, data)
+    #     result["silhouette"] = silhouette
+    # except Exception as e:
+    #     print("silhouette error", e)
 
     if do_print:
         print(result)
@@ -225,7 +228,6 @@ def train_config(
     print(f"activation_function:\t {activation_function}")
     print(f"intermediate_dim:\t {intermediate_dim}")
     print(f"epochs:\t {epochs}")
-    
     
     file_name = f"metric_{os.path.basename(dataset).split('.')[0]}_{model}_{layer_type}_{layers}-layers_{heads}-heads_{activation_function}_{'_'.join(name_space)}_{intermediate_dim}_{epochs}_{feature_type}"
 
@@ -302,11 +304,11 @@ def train_config(
     history = {
         "loss": [],
         "F1": [],
-        "diff": [],
+        # "diff": [],
         "modularity": [],
-        "homogenity": [],
+        # "homogenity": [],
         "density": [],
-        "silhouette": [],
+        # "silhouette": [],
     }
 
     best_f1 = -1
@@ -326,32 +328,32 @@ def train_config(
         model.train()
         history["loss"].append(loss.item())
         history["F1"].append(result["F1"])
-        if prev_f_out is None:
-            prev_f_out = F_out
-            diff = -1
-        else:
-            diff = torch.abs(F_out - prev_f_out).sum().item()
-            prev_f_out = F_out
+        # if prev_f_out is None:
+        #     prev_f_out = F_out
+        #     diff = -1
+        # else:
+        #     diff = torch.abs(F_out - prev_f_out).sum().item()
+        #     prev_f_out = F_out
 
-        history["diff"].append(diff)
+        # history["diff"].append(diff)
         modularity = result["modularity"]
-        homogenity = result["homogenity"]
+        # homogenity = result["homogenity"]
         density = result["density"]
-        silhouette = result["silhouette"]
+        # silhouette = result["silhouette"]
         history["modularity"].append(modularity)
         history["density"].append(density)
-        history["silhouette"].append(silhouette)
-        history["homogenity"].append(homogenity)
+        # history["silhouette"].append(silhouette)
+        # history["homogenity"].append(homogenity)
 
         print(
-            f"Epoch: {epoch + 1:02}/{epochs}, loss:{loss.item():.4f}, F1: {result['F1']:.4f}, diff: {diff:.4f}, modularity: {modularity:.4f}, density: {density:.4f}, homogenity: {homogenity:.4f}, silhouette: {silhouette:.4f}"
+            f"Epoch: {epoch + 1:02}/{epochs}, loss:{loss.item():.4f}, F1: {result['F1']:.4f}, modularity: {modularity:.4f}, density: {density:.4f}"
         )
 
         if result["modularity"] > best_modularity:
             best_modularity = result["modularity"]
             best_result_save = result.copy()
 
-            best_result_save["diff"] = diff
+            # best_result_save["diff"] = diff
             best_result_save["loss"] = loss.item()
             best_result_save["epoch"] = epoch
 
@@ -383,8 +385,6 @@ def train_config(
     plt.savefig(os.path.join(base_dir, "plots", f"{file_name}.jpg"))
 
     return best_result_save, history
-
-
 # %%
 os.makedirs(base_dir, exist_ok=True)
 os.makedirs(os.path.join(base_dir, "results"), exist_ok=True)
@@ -403,5 +403,5 @@ best_result, history = train_config(
     "relu",
     dataset,
     test_mode=False,
-    epochs=5000,
+    epochs=2000,
 )

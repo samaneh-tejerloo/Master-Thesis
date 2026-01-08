@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from torch_geometric.utils import add_self_loops
 from dataset import PPIDataLoadingUtil
 import torch.nn as nn
-from models import SimpleGCN, SimpleGAT, JKNetGATConcat
+#from models import SimpleGCN, SimpleGAT, JKNetGATConcat
 from torch_geometric.data import Data
 import torch
 from nocd_decoder import BerpoDecoder
@@ -14,17 +14,16 @@ from constants import SGD_GOLD_STANDARD_PATH
 import numpy as np
 from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
-from sklearn.cluster import DBSCAN
-
+import torch.nn as nn
 # %%
 BALANCE = False
 Weighted = True
-DATASET_PATH = "datasets/tadw-sc/krogan-core/krogan-core.csv"
+DATASET_PATH = "datasets/tadw-sc/biogrid/biogrid.csv"
 IS_ADA_PPI = False
-EPOCHS = 2000
+EPOCHS = 5000
 LAM = 0
 # only affects the TADW_SC datasets
-NAME_SPACES = ["BP"]
+NAME_SPACES = ["BP","MF","CC"]
 # %%
 ppi_data_loader = PPIDataLoadingUtil(
     DATASET_PATH,
@@ -66,8 +65,6 @@ def process_features(features):
             else:
                 _features[idx] = sum_embeddings / sum_weights
     return _features
-
-
 # %%
 bp_features = process_features(bp_features)
 mf_features = process_features(mf_features)
@@ -76,8 +73,6 @@ cc_features = process_features(cc_features)
 features = torch.cat([bp_features, mf_features, cc_features], dim=1)
 # %%
 data = Data(x=features, edge_index=edge_index)
-
-
 # %%
 # model = SimpleGCN(2048, 512, 256, proj=data.num_features)
 # model = JKNetGATConcat(
@@ -118,18 +113,9 @@ if Weighted:
     )
 else:
     A[data.edge_index[0], data.edge_index[1]] = 1
-#%%
-A_2 = A @ A
-A_2[A_2 > 0] = 1
-for i in range(A.shape[0]):
-    A_2[i, i] = 0
 # %%
 # decoder = nocd.nn.BerpoDecoder(data.num_nodes, data.num_edges, balance_loss=BALANCE)
 decoder = BerpoDecoder(data.num_nodes, A.sum().item(), balance_loss=BALANCE)
-decoder_2 = BerpoDecoder(data.num_nodes, A_2.sum().item(), balance_loss=BALANCE)
-# %%
-model.train()
-F_out = model(data)
 # %%
 epochs = EPOCHS
 model.train()
@@ -137,28 +123,7 @@ model.train()
 for epoch in range(epochs):
     optimizer.zero_grad()
     F_out = model(data)
-    if Weighted:
-        if LAM == 0:
-            loss_1 = decoder.loss_full_weighted(F_out, A)
-            loss = loss_1
-        elif LAM == 1:
-            loss_2 = decoder_2.loss_full_weighted(F_out, A_2)
-            loss = loss_2
-        else:
-            loss_1 = decoder.loss_full_weighted(F_out, A)
-            loss_2 = decoder_2.loss_full_weighted(F_out, A_2)
-            loss = (1 - LAM) * loss_1 + (LAM) * loss_2
-    else:
-        if LAM == 0:
-            loss_1 = decoder.loss_full(F_out, A.numpy())
-            loss = loss_1
-        elif LAM == 1:
-            loss_2 = decoder_2.loss_full(F_out, A_2.numpy())
-            loss = loss_2
-        else:
-            loss_1 = decoder.loss_full(F_out, A.numpy())
-            loss_2 = decoder_2.loss_full(F_out, A_2.numpy())
-            loss = (1 - LAM) * loss_1 + (LAM) * loss_2
+    loss = decoder.loss_full_weighted(F_out, A)
     loss.backward()
     optimizer.step()
     # progress_bar.set_description(f'Epoch: {epoch+1:02}/{epochs}, loss:{loss.item():.4f}')
