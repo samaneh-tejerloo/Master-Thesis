@@ -123,7 +123,7 @@ class BerpoDecoder(BernoulliDecoder):
 
     def loss_full(self, emb, adj):
         """Compute BerPo loss for all edges & non-edges in a graph."""
-        e1, e2 = adj.nonzero()
+        e1, e2 = adj.nonzero(as_tuple=True)
         edge_dots = torch.sum(emb[e1] * emb[e2], dim=1)
         loss_edges = -torch.sum(torch.log(-torch.expm1(-self.eps - edge_dots)))
 

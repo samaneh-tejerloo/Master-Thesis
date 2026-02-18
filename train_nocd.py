@@ -1,6 +1,6 @@
 #%%
 from dataset import PPIDataLoadingUtil
-from models import SimpleGCN, SimpleGAT, JKNetGATWith3Layers
+from models import SimpleGNN
 from torch_geometric.data import Data
 import torch
 from nocd_decoder import BerpoDecoder
@@ -11,13 +11,14 @@ import numpy as np
 from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 from sklearn.cluster import DBSCAN
+import torch_geometric.nn as gnn
 # %%
 BALANCE = False
-Weighted = True
-DATASET_PATH = 'datasets/tadw-sc/krogan-core/krogan-core.csv'
+Weighted = False
+DATASET_PATH = 'datasets/tadw-sc/biogrid/biogrid.csv'
 IS_ADA_PPI = False
-EPOCHS = 2000
-LAM = 0
+EPOCHS = 5000
+LAM = 1
 # only affects the TADW_SC datasets
 NAME_SPACES = ['BP', 'MF']
 #%%
@@ -31,7 +32,8 @@ data = Data(x=features, edge_index=edge_index)
 # %%
 # model = SimpleGAT(embedding_dim=data.num_features, intermediate_dim=512, encoding_dim=256, heads=4, dropout=0)
 # model = BetterGCN(data.num_features, 512, 256)
-model = JKNetGATWith3Layers(embedding_dim=data.num_features, intermediate_dim=512,encoding_dim=512, heads=4, dropout=0)
+# model = JKNetGATWith3Layers(embedding_dim=data.num_features, intermediate_dim=512,encoding_dim=512, heads=4, dropout=0)
+model = SimpleGNN(data.num_features, 512, 512, 2, gnn.GCNConv)
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
 
 A = torch.zeros(data.num_nodes, data.num_nodes, dtype=torch.float32)
