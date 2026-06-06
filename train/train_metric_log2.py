@@ -332,7 +332,7 @@ datasets = [
 
 for dataset in datasets:
     for layer_type in ['GAT']:
-        for config in [(False, 0), (False, 1), (False,0.5)]:
+        for config in [(False,0.5)]:
             if 'DIP' in dataset:
                 epochs = 5000
             else:

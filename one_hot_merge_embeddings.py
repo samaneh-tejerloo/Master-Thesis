@@ -8,7 +8,9 @@ import torch_geometric.nn as gnn
 from torch_geometric.data import Data
 import numpy as np
 # %%
-path = "datasets/tadw-sc/collins_2007/colins2007.csv"
+path = "datasets/tadw-sc/collins/collins.csv"
+model_one_hot_weights = 'logs/activation_functions/weights/metric_collins_SimpleGNN_GAT_2-layers_4-heads_relu_BP_MF_512_2000_one_hot_weighted_best_modularity.pt'
+model_embedding_weights = 'logs/embeddings/weights/metric_collins_SimpleGNN_GAT_2-layers_4-heads_relu_BP_MF_CC_512_2000_embedding_weighted_best_modularity.pt'
 embedding_dataset = PPIDataLoadingUtil(path, load_embeddings=True, load_weights=True)
 one_hot_dataset = PPIDataLoadingUtil(path, load_embeddings=False, load_weights=True)
 # %%
@@ -17,7 +19,6 @@ one_hot_features = one_hot_dataset.get_features(
     "one_hot", name_spaces=["BP", "MF"]
 )
 one_hot_features = torch.tensor(one_hot_features, dtype=torch.float32)
-
 # %%
 bp_features = embedding_dataset.get_features(type="embedding", name_spaces=["BP"])
 mf_features = embedding_dataset.get_features(type="embedding", name_spaces=["MF"])
@@ -31,12 +32,12 @@ embedding_features = torch.concat([bp_features, mf_features, cc_features], dim=-
 model_one_hot = SimpleGNN(one_hot_features.shape[1], 512, 512, 2, gnn.GATConv)
 model_embeddings = SimpleGNN(embedding_features.shape[1], 512, 512, 2, gnn.GATConv)
 # %%
-model_one_hot.load_state_dict(torch.load("logs/weights/metric_colins2007_SimpleGNN_GAT_2-layers_4-heads_relu_BP_MF_512_2000_one_hot_best.pt"))
+model_one_hot.load_state_dict(torch.load(model_one_hot_weights))
 model_one_hot.eval()
 # %%
 model_embeddings.load_state_dict(
     torch.load(
-        "logs/weights/metric_colins2007_SimpleGNN_GAT_2-layers_4-heads_relu_BP_MF_CC_512_2000_embedding_best.pt"
+        model_embedding_weights
     )
 )
 model_embeddings.eval()
@@ -75,6 +76,9 @@ def merge_unique(lists):
     uniq = set(frozenset(group) for group in all_groups)
     return [sorted(list(g)) for g in uniq]
 
+def print_results(result):
+    for key, value in result.items():
+        print(key, ":", np.round(value, 3))
 # %%
 algorithm_complexes_2 = get_algorithm_complexes(F_one_hot, threshold=0.2)
 algorithm_complexes_3 = get_algorithm_complexes(F_one_hot, threshold=0.3)
@@ -92,6 +96,7 @@ all_complexes = [
     algorithm_complexes_7,
 ]
 one_hot_complexes = merge_unique(all_complexes)
+one_hot_3_complexes = algorithm_complexes_3
 #%%
 algorithm_complexes_2 = get_algorithm_complexes(F_embedding, threshold=0.2)
 algorithm_complexes_3 = get_algorithm_complexes(F_embedding, threshold=0.3)
@@ -109,9 +114,15 @@ all_complexes = [
     algorithm_complexes_7,
 ]
 embeddings_complexes = merge_unique(all_complexes)
+embeddings_3_complexes = algorithm_complexes_3
 # %%
 evaluator = Evaluation(ppi_data_loader=one_hot_dataset)
 evaluator.filter_reference_complex(filtering_method="just_keep_dataset_proteins")
+#%%
+merge_3_complexes = merge_unique([one_hot_3_complexes, embeddings_3_complexes])
+merge_3_complexes = [c for c in merge_3_complexes if len(c) > 2]
+result = evaluator.evalute(merge_3_complexes)
+print_results(result)
 # %%
 one_hot_complexes = merge_unique([one_hot_complexes])
 embeddings_complexes = merge_unique([embeddings_complexes])
@@ -121,9 +132,7 @@ all_complexes = [c for c in all_complexes if len(c) > 2]
 print(len(one_hot_complexes))
 print(len(embeddings_complexes))
 print(len(all_complexes))
-def print_results(result):
-    for key, value in result.items():
-        print(key, ":", np.round(value, 3))
+
 # %%
 one_hot_complexes = [c for c in one_hot_complexes if len(c) > 2]
 result = evaluator.evalute(one_hot_complexes)

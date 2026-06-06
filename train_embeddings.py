@@ -22,7 +22,7 @@ import gc
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 device = 'cpu'
 
-experiment_name = 'activation_functions'
+experiment_name = 'embeddings_gelu'
 base_dir = os.path.join("logs", experiment_name)
 
 dataset = "datasets/tadw-sc/collins_2007/colins2007.csv"
@@ -326,14 +326,14 @@ os.makedirs(os.path.join(base_dir, "plots"), exist_ok=True)
 os.makedirs(os.path.join(base_dir, "history"), exist_ok=True)
 #%%
 datasets = [
-    #'datasets/tadw-sc/collins_2007/colins2007.csv',
-    #'datasets/tadw-sc/krogan-core/krogan-core.csv',
+    'datasets/tadw-sc/collins_2007/colins2007.csv',
+    'datasets/tadw-sc/krogan-core/krogan-core.csv',
     'datasets/tadw-sc/DIP/DIP.csv',
-    #'datasets/tadw-sc/krogan-extended/krogan-extended.csv',
-    #'datasets/tadw-sc/biogrid/biogrid.csv'
+    'datasets/tadw-sc/krogan-extended/krogan-extended.csv',
+    'datasets/tadw-sc/biogrid/biogrid.csv'
     ]
 #activation_functions = ['relu', 'gelu', 'elu'] 
-activation_functions = ['elu'] 
+activation_functions = ['gelu'] 
 
 for dataset in datasets:
     for activation_function in activation_functions:
@@ -355,8 +355,8 @@ for dataset in datasets:
             2,
             layer_type,
             num_heads,
-            "one_hot",
-            ["BP", "MF"],
+            "embedding",
+            ["BP", "MF", "CC"],
             activation_function,
             dataset,
             weighted=weighted,
